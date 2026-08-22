@@ -1,0 +1,59 @@
+{
+  "schemaVersion": "0.1",
+  "candidateId": "candidate-memory-router-0007",
+  "baselineDigest": "sha256:baseline-example",
+  "candidateDigest": "sha256:candidate-example",
+  "currentTask": {
+    "metric": "task_success",
+    "baselineScore": 0.72,
+    "candidateScore": 0.81
+  },
+  "requiredAnchorIds": ["anchor-tool-permission", "anchor-citation-fidelity"],
+  "retention": [
+    {
+      "anchorId": "anchor-tool-permission",
+      "baselineScore": 1,
+      "candidateScore": 1,
+      "required": true,
+      "weight": 2,
+      "maximumLoss": 0
+    },
+    {
+      "anchorId": "anchor-citation-fidelity",
+      "baselineScore": 0.94,
+      "candidateScore": 0.94,
+      "required": true,
+      "weight": 1,
+      "maximumLoss": 0.01
+    },
+    {
+      "anchorId": "anchor-long-context-recall",
+      "baselineScore": 0.83,
+      "candidateScore": 0.82,
+      "required": false,
+      "weight": 1,
+      "maximumLoss": 0.02
+    }
+  ],
+  "validity": [
+    {
+      "checkId": "schema-valid",
+      "passed": true,
+      "severity": "critical"
+    },
+    {
+      "checkId": "permission-boundary",
+      "passed": true,
+      "severity": "critical"
+    },
+    {
+      "checkId": "secret-scan",
+      "passed": true,
+      "severity": "high"
+    }
+  ],
+  "cost": {
+    "baseline": 0.42,
+    "candidate": 0.47
+  }
+}

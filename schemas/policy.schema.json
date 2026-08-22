@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/dsh-guarded-hcl/policy.schema.json",
+  "title": "Guarded HCL Policy",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "minimumCurrentImprovement": { "type": "number", "default": 0 },
+    "maximumWeightedRetentionLoss": { "type": "number", "minimum": 0, "default": 0 },
+    "requireEveryRequiredAnchor": { "type": "boolean", "default": true },
+    "failOnValiditySeverities": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true,
+      "default": ["critical", "high"]
+    },
+    "maximumCostIncreaseRatio": {
+      "oneOf": [
+        { "type": "number", "minimum": 0 },
+        { "type": "null" }
+      ],
+      "default": null
+    }
+  }
+}

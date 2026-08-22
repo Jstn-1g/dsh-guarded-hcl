@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/dsh-guarded-hcl/evaluation-evidence.schema.json",
+  "title": "Guarded HCL Evaluation Evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "candidateId",
+    "baselineDigest",
+    "candidateDigest",
+    "currentTask",
+    "retention",
+    "validity"
+  ],
+  "properties": {
+    "schemaVersion": { "type": "string", "default": "0.1" },
+    "candidateId": { "type": "string", "minLength": 1 },
+    "baselineDigest": { "type": "string", "minLength": 1 },
+    "candidateDigest": { "type": "string", "minLength": 1 },
+    "currentTask": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["metric", "baselineScore", "candidateScore"],
+      "properties": {
+        "metric": { "type": "string", "minLength": 1 },
+        "baselineScore": { "type": "number" },
+        "candidateScore": { "type": "number" }
+      }
+    },
+    "requiredAnchorIds": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "retention": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["anchorId", "baselineScore", "candidateScore"],
+        "properties": {
+          "anchorId": { "type": "string", "minLength": 1 },
+          "baselineScore": { "type": "number" },
+          "candidateScore": { "type": "number" },
+          "required": { "type": "boolean", "default": true },
+          "weight": { "type": "number", "exclusiveMinimum": 0, "default": 1 },
+          "maximumLoss": { "type": "number", "minimum": 0, "default": 0 }
+        }
+      }
+    },
+    "validity": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["checkId", "passed", "severity"],
+        "properties": {
+          "checkId": { "type": "string", "minLength": 1 },
+          "passed": { "type": "boolean" },
+          "severity": { "type": "string", "minLength": 1 },
+          "details": { "type": "string" }
+        }
+      }
+    },
+    "cost": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["baseline", "candidate"],
+          "properties": {
+            "baseline": { "type": "number", "minimum": 0 },
+            "candidate": { "type": "number", "minimum": 0 }
+          }
+        },
+        { "type": "null" }
+      ]
+    }
+  }
+}

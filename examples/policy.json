@@ -1,0 +1,7 @@
+{
+  "minimumCurrentImprovement": 0.03,
+  "maximumWeightedRetentionLoss": 0.01,
+  "requireEveryRequiredAnchor": true,
+  "failOnValiditySeverities": ["critical", "high"],
+  "maximumCostIncreaseRatio": 0.25
+}

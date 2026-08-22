@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/dsh-guarded-hcl/candidate.schema.json",
+  "title": "Guarded HCL Candidate",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "candidateId", "base", "changes", "provenance"],
+  "properties": {
+    "schemaVersion": { "const": "0.1" },
+    "candidateId": { "type": "string", "minLength": 1 },
+    "base": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["revision", "digest"],
+      "properties": {
+        "revision": { "type": "integer", "minimum": 0 },
+        "digest": { "type": "string", "minLength": 1 }
+      }
+    },
+    "changes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["component", "operation", "path", "reason"],
+        "properties": {
+          "component": {
+            "enum": [
+              "task-interface",
+              "experience-memory",
+              "capability-map",
+              "adaptive-router"
+            ]
+          },
+          "operation": { "enum": ["add", "replace", "remove"] },
+          "path": { "type": "string", "pattern": "^/" },
+          "value": {},
+          "reason": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["optimizer", "sourceSession", "createdAt"],
+      "properties": {
+        "optimizer": { "type": "string", "minLength": 1 },
+        "sourceSession": { "type": "string", "minLength": 1 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      }
+    }
+  }
+}

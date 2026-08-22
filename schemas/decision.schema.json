@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/dsh-guarded-hcl/decision.schema.json",
+  "title": "Guarded HCL Commit Decision",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "accepted",
+    "candidateId",
+    "reasons",
+    "metrics",
+    "evidenceDigest",
+    "decisionDigest"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "0.1" },
+    "accepted": { "type": "boolean" },
+    "candidateId": { "type": "string", "minLength": 1 },
+    "reasons": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["code", "message"],
+        "properties": {
+          "code": { "type": "string", "minLength": 1 },
+          "message": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["currentImprovement", "weightedRetentionLoss", "costIncreaseRatio"],
+      "properties": {
+        "currentImprovement": { "type": "number" },
+        "weightedRetentionLoss": { "type": "number", "minimum": 0 },
+        "costIncreaseRatio": {
+          "oneOf": [{ "type": "number" }, { "type": "null" }]
+        }
+      }
+    },
+    "evidenceDigest": { "type": "string", "minLength": 1 },
+    "decisionDigest": { "type": "string", "minLength": 1 }
+  }
+}
