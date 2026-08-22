@@ -89,6 +89,15 @@ The optimizer never owns its rubric or silently mutates cross-session state.
 See [`docs/design.md`](docs/design.md) for the proposed Cordis boundaries and
 threat model.
 
+### Draft portable JSON digest profile
+
+Issue [#5](https://github.com/Jstn-1g/dsh-guarded-hcl/issues/5) requires a
+cross-runtime digest before RunnerBinding can be committed by a future
+evidence version. The draft [JCS + SHA-256 profile](docs/jcs-sha256-profile.md)
+and its [implementation-neutral vectors](conformance/jcs-sha256-v0.1.json)
+are reviewable prerequisites. They do not change the existing v0.1 gate
+digests or define RunnerBinding by themselves.
+
 ## Install from GitHub
 
 The package is not published to the npm registry yet. Install the pinned GitHub

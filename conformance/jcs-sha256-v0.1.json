@@ -1,0 +1,61 @@
+{
+  "profile": "urn:dsh-guarded-hcl:digest-profile:jcs-sha256:v0.1",
+  "specification": "https://www.rfc-editor.org/rfc/rfc8785",
+  "accepted": [
+    {
+      "id": "recursive-key-order",
+      "input": "{\"z\":[{\"b\":2,\"a\":1},3],\"a\":{\"d\":4,\"c\":3}}",
+      "canonical": "{\"a\":{\"c\":3,\"d\":4},\"z\":[{\"a\":1,\"b\":2},3]}",
+      "canonicalUtf8Hex": "7b2261223a7b2263223a332c2264223a347d2c227a223a5b7b2261223a312c2262223a327d2c335d7d",
+      "sha256": "sha256:d9cc4c13a18a17e157344006d60b5068c66fd62b627f719726f79cfc8e8c7867"
+    },
+    {
+      "id": "ecmascript-number-forms",
+      "input": "{\"whole\":3.0,\"same\":3,\"negativeZero\":-0,\"large\":1E30,\"fraction\":4.50,\"small\":2e-3}",
+      "canonical": "{\"fraction\":4.5,\"large\":1e+30,\"negativeZero\":0,\"same\":3,\"small\":0.002,\"whole\":3}",
+      "canonicalUtf8Hex": "7b226672616374696f6e223a342e352c226c61726765223a31652b33302c226e656761746976655a65726f223a302c2273616d65223a332c22736d616c6c223a302e3030322c2277686f6c65223a337d",
+      "sha256": "sha256:b8e8b6e72f722ec0ee672e46e17dbeebcc33c33e5b0df6d5e7e4b23871230f60"
+    },
+    {
+      "id": "rfc8785-utf16-property-order",
+      "input": "{\"\\u20ac\":\"Euro Sign\",\"\\r\":\"Carriage Return\",\"\\ufb33\":\"Hebrew Letter Dalet With Dagesh\",\"1\":\"One\",\"\\ud83d\\ude00\":\"Emoji: Grinning Face\",\"\\u0080\":\"Control\",\"\\u00f6\":\"Latin Small Letter O With Diaeresis\"}",
+      "canonical": "{\"\\r\":\"Carriage Return\",\"1\":\"One\",\"\":\"Control\",\"ö\":\"Latin Small Letter O With Diaeresis\",\"€\":\"Euro Sign\",\"😀\":\"Emoji: Grinning Face\",\"דּ\":\"Hebrew Letter Dalet With Dagesh\"}",
+      "canonicalUtf8Hex": "7b225c72223a2243617272696167652052657475726e222c2231223a224f6e65222c22c280223a22436f6e74726f6c222c22c3b6223a224c6174696e20536d616c6c204c6574746572204f205769746820446961657265736973222c22e282ac223a224575726f205369676e222c22f09f9880223a22456d6f6a693a204772696e6e696e672046616365222c22efacb3223a22486562726577204c65747465722044616c6574205769746820446167657368227d",
+      "sha256": "sha256:5e321556d22018a9656991a9e94f77ec175fa193e52a2429d312f8419ec8b08c"
+    },
+    {
+      "id": "rfc8785-number-boundaries",
+      "input": "{\"minPositive\":5e-324,\"minNegative\":-5e-324,\"maxPositive\":1.7976931348623157e+308,\"belowSmallBoundary\":9.999999999999997e-7,\"smallBoundary\":0.000001,\"largeBoundary\":1e+21,\"belowLargeBoundary\":999999999999999900000}",
+      "canonical": "{\"belowLargeBoundary\":999999999999999900000,\"belowSmallBoundary\":9.999999999999997e-7,\"largeBoundary\":1e+21,\"maxPositive\":1.7976931348623157e+308,\"minNegative\":-5e-324,\"minPositive\":5e-324,\"smallBoundary\":0.000001}",
+      "canonicalUtf8Hex": "7b2262656c6f774c61726765426f756e64617279223a3939393939393939393939393939393930303030302c2262656c6f77536d616c6c426f756e64617279223a392e393939393939393939393939393937652d372c226c61726765426f756e64617279223a31652b32312c226d6178506f736974697665223a312e37393736393331333438363233313537652b3330382c226d696e4e65676174697665223a2d35652d3332342c226d696e506f736974697665223a35652d3332342c22736d616c6c426f756e64617279223a302e3030303030317d",
+      "sha256": "sha256:0393d9eaefe6336926da80c86547496d10af5b2c9920919991abeb157cd8ecdf"
+    }
+  ],
+  "rejected": [
+    {
+      "id": "escaped-equivalent-duplicate-key",
+      "input": "{\"a\":1,\"\\u0061\":2}",
+      "errorCode": "DUPLICATE_PROPERTY"
+    },
+    {
+      "id": "nan-token",
+      "input": "{\"value\":NaN}",
+      "errorCode": "INVALID_JSON"
+    },
+    {
+      "id": "infinity-token",
+      "input": "{\"value\":Infinity}",
+      "errorCode": "INVALID_JSON"
+    },
+    {
+      "id": "lone-high-surrogate",
+      "input": "{\"value\":\"\\ud800\"}",
+      "errorCode": "LONE_SURROGATE"
+    },
+    {
+      "id": "lone-low-surrogate",
+      "input": "{\"value\":\"\\udead\"}",
+      "errorCode": "LONE_SURROGATE"
+    }
+  ]
+}
