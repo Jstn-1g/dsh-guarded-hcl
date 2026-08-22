@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented here.
 
+## Unreleased
+
+- Added a draft, dependency-free RFC 8785 JCS + SHA-256 digest profile.
+- Added implementation-neutral accepted and rejected conformance vectors.
+- Preserved all existing v0.1 policy, evidence, and decision digest behavior.
+
 ## 0.1.0 — 2026-08-21
 
 - Added the dependency-free guarded retention and commit gate.
