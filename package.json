@@ -1,16 +1,27 @@
 {
   "name": "dsh-guarded-hcl",
   "version": "0.1.0",
-  "description": "A portable, code-owned retention and commit gate for guarded Harness Continual Learning in DeepSeek Harness ecosystems.",
+  "description": "Pre-activation gate that rejects agent updates when they regress retained capabilities, validity, or cost.",
   "type": "module",
   "private": false,
   "license": "MIT",
   "author": "Justin Skowyra",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Jstn-1g/dsh-guarded-hcl.git"
+  },
+  "homepage": "https://github.com/Jstn-1g/dsh-guarded-hcl#readme",
+  "bugs": {
+    "url": "https://github.com/Jstn-1g/dsh-guarded-hcl/issues"
+  },
   "keywords": [
     "deepseek-harness",
     "continual-learning",
     "agent-harness",
+    "ai-agents",
     "evaluation",
+    "json-schema",
+    "regression-testing",
     "retention",
     "rollback"
   ],
@@ -29,15 +40,18 @@
     "bin",
     "docs",
     "examples",
+    "integrations",
     "schemas",
     "src",
+    "CHANGELOG.md",
     "README.md",
     "LICENSE"
   ],
   "scripts": {
     "test": "node --test",
-    "check": "node --check src/canonical.js && node --check src/gate.js && node --check src/index.js && node --check bin/hcl-gate.js && node --check test/gate.test.js",
+    "check": "node --check src/canonical.js && node --check src/gate.js && node --check src/index.js && node --check bin/hcl-gate.js && node --check integrations/dsh-wm/contract.js && node --check integrations/dsh-wm/sunset-conformance.js && node --check test/gate.test.js && node --check test/cli.test.js && node --check test/dsh-wm-integration.test.js",
     "example:pass": "node ./bin/hcl-gate.js ./examples/policy.json ./examples/evaluation-pass.json",
-    "example:reject": "node ./bin/hcl-gate.js ./examples/policy.json ./examples/evaluation-regression.json"
+    "example:reject": "node ./bin/hcl-gate.js ./examples/policy.json ./examples/evaluation-regression.json",
+    "example:dsh-wm": "node ./integrations/dsh-wm/sunset-conformance.js"
   }
 }

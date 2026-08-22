@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://example.invalid/dsh-guarded-hcl/decision.schema.json",
+  "$id": "https://raw.githubusercontent.com/Jstn-1g/dsh-guarded-hcl/v0.1.0/schemas/decision.schema.json",
   "title": "Guarded HCL Commit Decision",
   "type": "object",
   "additionalProperties": false,
@@ -10,6 +10,7 @@
     "candidateId",
     "reasons",
     "metrics",
+    "policyDigest",
     "evidenceDigest",
     "decisionDigest"
   ],
@@ -41,6 +42,7 @@
         }
       }
     },
+    "policyDigest": { "type": "string", "minLength": 1 },
     "evidenceDigest": { "type": "string", "minLength": 1 },
     "decisionDigest": { "type": "string", "minLength": 1 }
   }

@@ -1,52 +1,102 @@
 # dsh-guarded-hcl
 
-A small, dependency-free reference implementation of the **evaluation and commitment boundary** for guarded Harness Continual Learning (HCL) in the DeepSeek Harness ecosystem.
+[![CI](https://github.com/Jstn-1g/dsh-guarded-hcl/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Jstn-1g/dsh-guarded-hcl/actions/workflows/ci.yml)
+[![dsh-wm conformance](https://github.com/Jstn-1g/dsh-guarded-hcl/actions/workflows/dsh-wm-conformance.yml/badge.svg?branch=main)](https://github.com/Jstn-1g/dsh-guarded-hcl/actions/workflows/dsh-wm-conformance.yml)
+[![Release](https://img.shields.io/github/v/release/Jstn-1g/dsh-guarded-hcl?display_name=tag&sort=semver)](https://github.com/Jstn-1g/dsh-guarded-hcl/releases)
+[![Node.js 22+](https://img.shields.io/badge/node-%3E%3D22-339933)](package.json)
+[![MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
-> **Status:** early contract draft and executable reference gate. This is not an official DeepSeek project and is not yet a live Cordis plugin.
+**Prevent continual-learning updates from improving one task while silently
+breaking old capabilities.** This dependency-free Node.js CLI and JSON contract
+turn supplied improvement, retention, validity, and cost evidence into a
+deterministic promotion or rejection decision. The candidate is identified by
+the digest supplied by the caller; activation remains integration-owned.
 
-## Why this exists
+> **Status:** independent early contract draft and executable reference gate.
+> This is not an official DeepSeek project, not yet a live Cordis plugin, and
+> not a security sandbox.
 
-An optimizer that proposes memory, skill, prompt, or routing updates should not also be the authority that approves and commits those updates. A credible continual-learning loop needs an independent evaluator and a code-owned retention gate:
+## The 30-second proof
 
-```text
-propose candidate
-  -> evaluate current-task improvement
-  -> evaluate historical retention anchors
-  -> run validity and budget checks
-  -> commit exact candidate or keep baseline unchanged
-```
+The included regression fixture looks better on its current task and still must
+not ship:
 
-DeepSeek Harness already provides a strong composition substrate through Cordis. This project focuses on the smaller missing contract between **proposal**, **evidence**, and **commitment**.
-
-## What version 0.1 contains
-
-- JSON Schemas for candidates, evaluation evidence, gate policy, and commit decisions;
-- deterministic SHA-256 evidence and decision digests;
-- current-task improvement thresholds;
-- required per-anchor retention checks;
-- weighted retention-loss limits;
-- severity-aware validity gates;
-- optional cost-growth limits;
-- passing and deliberately regressing examples;
-- Node's built-in test suite with no runtime dependencies.
-
-## Quick start
-
-Requires Node.js 22 or newer.
+| Signal | Baseline | Candidate | Result |
+| --- | ---: | ---: | --- |
+| Current-task score | 0.72 | **0.86** | +0.14 |
+| Permission anchor | 1.00 | **0.70** | regression |
+| Citation fidelity | 0.94 | **0.83** | regression |
+| Cost | 0.42 | **0.61** | +45.2% |
+| Commit decision |  |  | **rejected** |
 
 ```bash
+git clone https://github.com/Jstn-1g/dsh-guarded-hcl.git
+cd dsh-guarded-hcl
+npm ci --ignore-scripts
 npm test
 npm run example:pass
-npm run example:reject
-```
-
-The reject example exits with status `2`, making the gate usable in CI:
-
-```bash
 node ./bin/hcl-gate.js ./examples/policy.json ./examples/evaluation-regression.json
 ```
 
-## Library usage
+The last command prints five explicit rejection reasons and exits with status
+`2` by design. The CLI never activates the rejected candidate.
+
+```text
+REQUIRED_ANCHOR_REGRESSION (two anchors)
+RETENTION_BUDGET_EXCEEDED
+VALIDITY_CHECK_FAILED
+COST_BUDGET_EXCEEDED
+```
+
+## Real evaluator fixture: dsh-wm Sunset
+
+The optional [`dsh-wm` conformance fixture](integrations/dsh-wm/README.md)
+executes the real Sunset evaluator at pinned upstream commit
+[`cd06866`](https://github.com/WayneJin0918/dsh-wm/commit/cd06866a638b1dcc80defa6d674ff3470ff0ad31).
+The synthetic regression candidate stays near-perfect in the first half
+(`SSIM 0.993`) but collapses in the second (`SSIM 0.476`), so the gate rejects
+it before promotion.
+
+```bash
+git clone https://github.com/WayneJin0918/dsh-wm.git ../dsh-wm
+git -C ../dsh-wm checkout cd06866a638b1dcc80defa6d674ff3470ff0ad31
+npm run example:dsh-wm -- ../dsh-wm
+```
+
+This fixture proves the evaluator-to-decision seam. It does not claim a live
+Cordis adapter or a complete Pack/Recipe/Scorecard implementation.
+
+## Separation of duties
+
+```text
+optimizer proposes an exact candidate
+  -> independent evaluator produces evidence
+  -> code-owned policy checks improvement, retention, validity, and cost
+  -> commit controller promotes that exact candidate or keeps the baseline
+```
+
+The optimizer never owns its rubric or silently mutates cross-session state.
+
+## Contract overview
+
+| Contract | Purpose |
+| --- | --- |
+| [`candidate.schema.json`](schemas/candidate.schema.json) | Versioned optimizer proposal against an exact baseline |
+| [`evaluation-evidence.schema.json`](schemas/evaluation-evidence.schema.json) | Current-task, retention, validity, and cost evidence |
+| [`policy.schema.json`](schemas/policy.schema.json) | Code-owned thresholds the optimizer cannot rewrite implicitly |
+| [`decision.schema.json`](schemas/decision.schema.json) | Deterministic promotion or rejection result |
+
+See [`docs/design.md`](docs/design.md) for the proposed Cordis boundaries and
+threat model.
+
+## Install from GitHub
+
+The package is not published to the npm registry yet. Install the pinned GitHub
+release instead:
+
+```bash
+npm install github:Jstn-1g/dsh-guarded-hcl#v0.1.0
+```
 
 ```js
 import { evaluateCandidate } from 'dsh-guarded-hcl'
@@ -58,45 +108,43 @@ if (!decision.accepted) {
 }
 ```
 
-## Contract overview
+The installed CLI accepts policy and evidence JSON files:
 
-| Contract | Purpose |
-| --- | --- |
-| `candidate.schema.json` | Versioned optimizer proposal against an exact baseline |
-| `evaluation-evidence.schema.json` | Current-task, retention, validity, and cost evidence |
-| `policy.schema.json` | Code-owned thresholds that the optimizer cannot rewrite implicitly |
-| `decision.schema.json` | Deterministic promotion or rejection result |
+```bash
+npx hcl-gate ./policy.json ./evaluation-evidence.json
+```
 
-See [`docs/design.md`](docs/design.md) for the proposed Cordis service boundaries and threat model.
+## What version 0.1 contains
 
-## What is intentionally not here yet
+- dependency-free deterministic retention and commit gate;
+- JSON Schemas for candidate, evidence, policy, and decision records;
+- required per-anchor and weighted retention checks;
+- severity-aware validity and optional cost-growth gates;
+- canonical SHA-256 policy, evidence, and decision digests;
+- passing and deliberately regressing fixtures;
+- a pinned external `dsh-wm` evaluator conformance workflow;
+- Node's built-in test suite and GitHub Actions.
 
-- automatic arbitrary source-code mutation;
-- a claim that this is a security sandbox;
-- a live DSH plugin built against guessed interfaces;
-- a universal benchmark or one prescribed search algorithm;
-- silent cross-session changes.
+## Intentional limits
 
-A proper Cordis adapter should be written only after inspecting the exact services, events, and lifecycle contracts in the target DSH runtime.
+- no autonomous mutation of arbitrary source code;
+- no claim of production isolation or sandboxing;
+- no live Cordis adapter built against guessed interfaces;
+- no universal benchmark or prescribed optimizer;
+- no silent global or cross-session changes;
+- no claim of reproducing the complete Harness Continual Learning paper.
+
+## Contributing
+
+The most valuable contribution is another independently produced evaluation
+fixture. See [`CONTRIBUTING.md`](CONTRIBUTING.md) and the
+[integration request form](https://github.com/Jstn-1g/dsh-guarded-hcl/issues/new?template=integration.yml).
 
 ## Research and community context
 
-This draft is motivated by:
-
-- *Harness Continual Learning: Continual Adaptation Beyond Model Parameters*, arXiv:2608.19013;
-- DeepSeek Harness Discussion #2454, *Proposal: task-conditioned Harness evolution with evaluable Plugin Packs*;
-- existing community continual-evolution plugins that demonstrate persistent state, evaluation, rollback, and code-owned non-regression gates.
-
-The intended contribution is interoperability: shared evidence and commitment contracts that existing optimizers, evaluators, and memory plugins can implement.
-
-## Repository publishing notes
-
-After creating the GitHub repository:
-
-1. Add the topics `deepseek-harness`, `continual-learning`, `agent-evaluation`, and `harness`. Add `dsh-plugin` only after a live Cordis adapter exists.
-2. Keep the description precise: “Portable retention and commit gate for guarded Harness Continual Learning in DeepSeek Harness ecosystems.”
-3. Post the text in [`docs/github-discussion-comment.md`](docs/github-discussion-comment.md) to Discussion #2454 and add the repository link.
-4. Do not open a pull request against the official DSH repository while its contribution policy says external PRs are not being accepted.
+- [Harness Continual Learning: Continual Adaptation Beyond Model Parameters](https://arxiv.org/abs/2608.19013)
+- [DeepSeek Harness Discussion #2454](https://github.com/deepseek-ai/deepseek-harness/discussions/2454)
+- [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)
 
 ## License
 

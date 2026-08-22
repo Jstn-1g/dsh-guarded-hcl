@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://example.invalid/dsh-guarded-hcl/evaluation-evidence.schema.json",
+  "$id": "https://raw.githubusercontent.com/Jstn-1g/dsh-guarded-hcl/v0.1.0/schemas/evaluation-evidence.schema.json",
   "title": "Guarded HCL Evaluation Evidence",
   "type": "object",
   "additionalProperties": false,
@@ -13,7 +13,7 @@
     "validity"
   ],
   "properties": {
-    "schemaVersion": { "type": "string", "default": "0.1" },
+    "schemaVersion": { "const": "0.1", "default": "0.1" },
     "candidateId": { "type": "string", "minLength": 1 },
     "baselineDigest": { "type": "string", "minLength": 1 },
     "candidateDigest": { "type": "string", "minLength": 1 },

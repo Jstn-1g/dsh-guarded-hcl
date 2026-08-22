@@ -1,0 +1,54 @@
+name: External evaluator integration
+description: Propose a real evaluator or plugin fixture for the guarded gate.
+title: "[Integration]: "
+labels:
+  - help wanted
+body:
+  - type: input
+    id: project
+    attributes:
+      label: Upstream project
+      description: Public repository or evaluator name and URL.
+    validations:
+      required: true
+  - type: input
+    id: revision
+    attributes:
+      label: Exact revision
+      description: Commit SHA, release tag, or other immutable identifier.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence mapping
+      description: Explain the baseline, candidate, current-task metric, retention anchors, validity checks, and cost signal.
+    validations:
+      required: true
+  - type: dropdown
+    id: expected
+    attributes:
+      label: Expected gate result
+      options:
+        - Reject candidate
+        - Promote candidate
+        - Both fixtures
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Reproduction command
+      description: Commands that independently produce the evidence.
+      render: shell
+    validations:
+      required: true
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Scope confirmation
+      options:
+        - label: The fixture contains no credentials, private datasets, or proprietary artifacts.
+          required: true
+        - label: The proposal does not claim official DeepSeek endorsement or production sandboxing.
+          required: true

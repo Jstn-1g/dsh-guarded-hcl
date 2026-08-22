@@ -1,0 +1,40 @@
+name: dsh-wm conformance
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  sunset:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: WayneJin0918/dsh-wm
+          ref: cd06866a638b1dcc80defa6d674ff3470ff0ad31
+          path: upstream/dsh-wm
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci --ignore-scripts
+      - name: Verify pinned upstream objects
+        run: |
+          test "$(git -C upstream/dsh-wm rev-parse HEAD)" = "cd06866a638b1dcc80defa6d674ff3470ff0ad31"
+          test "$(git -C upstream/dsh-wm rev-parse HEAD:package.json)" = "2ba80a417271106b15a3a11096d89014188c28ea"
+          test "$(git -C upstream/dsh-wm rev-parse HEAD:fixtures/sunset)" = "241664e76f3bd46acd7786807753cbe67aa22a76"
+          test "$(git -C upstream/dsh-wm rev-parse HEAD:fixtures/sunset/pred)" = "ab29b384bacc857d89392fe43436f18da72a40fe"
+          test "$(git -C upstream/dsh-wm rev-parse HEAD:fixtures/sunset/gt)" = "1038068d2c249216f37017f12b90450a518b9cba"
+          test "$(git -C upstream/dsh-wm rev-parse HEAD:lib/diff.js)" = "3570163d4af0f99ee1d7c9490762dddd3febe85c"
+          test "$(git -C upstream/dsh-wm rev-parse HEAD:lib/ssim.js)" = "469065207f6a3afff17da92530a020ba1d6d813d"
+          test "$(git -C upstream/dsh-wm rev-parse HEAD:lib/frames.js)" = "b2e0ea9e18bfedd79c7530e9ab52f4083ec3e690"
+          test "$(git -C upstream/dsh-wm rev-parse HEAD:lib/png.js)" = "d5de470133c76211ab4c9eae5ea6d9312ecf2cbc"
+      - run: npm run example:dsh-wm -- ./upstream/dsh-wm

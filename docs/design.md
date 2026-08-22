@@ -47,7 +47,7 @@ The controller accepts only a complete evidence record. It checks the active bas
 - `candidate.schema.json`: proposed component-level changes and provenance.
 - `evaluation-evidence.schema.json`: current-task, retention, validity, and cost evidence.
 - `policy.schema.json`: code-owned acceptance thresholds.
-- `decision.schema.json`: deterministic accept/reject output with evidence and decision digests.
+- `decision.schema.json`: deterministic accept/reject output with policy, evidence, and decision digests.
 
 ## Cordis mapping
 

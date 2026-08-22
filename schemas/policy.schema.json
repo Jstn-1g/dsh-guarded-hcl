@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://example.invalid/dsh-guarded-hcl/policy.schema.json",
+  "$id": "https://raw.githubusercontent.com/Jstn-1g/dsh-guarded-hcl/v0.1.0/schemas/policy.schema.json",
   "title": "Guarded HCL Policy",
   "type": "object",
   "additionalProperties": false,

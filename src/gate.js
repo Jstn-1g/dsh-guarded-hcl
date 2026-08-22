@@ -8,6 +8,34 @@ const DEFAULT_POLICY = Object.freeze({
   maximumCostIncreaseRatio: null,
 })
 
+const POLICY_KEYS = new Set(Object.keys(DEFAULT_POLICY))
+const EVIDENCE_KEYS = new Set([
+  'schemaVersion',
+  'candidateId',
+  'baselineDigest',
+  'candidateDigest',
+  'currentTask',
+  'requiredAnchorIds',
+  'retention',
+  'validity',
+  'cost',
+])
+const CURRENT_TASK_KEYS = new Set([
+  'metric',
+  'baselineScore',
+  'candidateScore',
+])
+const RETENTION_KEYS = new Set([
+  'anchorId',
+  'baselineScore',
+  'candidateScore',
+  'required',
+  'weight',
+  'maximumLoss',
+])
+const VALIDITY_KEYS = new Set(['checkId', 'passed', 'severity', 'details'])
+const COST_KEYS = new Set(['baseline', 'candidate'])
+
 /**
  * Evaluate a candidate harness using evidence produced outside the optimizer.
  * The function is deterministic: the decision digest excludes wall-clock time.
@@ -20,6 +48,7 @@ const DEFAULT_POLICY = Object.freeze({
  *   candidateId: string,
  *   reasons: Array<{code: string, message: string}>,
  *   metrics: Record<string, number | null>,
+ *   policyDigest: string,
  *   evidenceDigest: string,
  *   decisionDigest: string
  * }}
@@ -146,6 +175,7 @@ export function evaluateCandidate(rawPolicy, rawEvidence) {
     }
   }
 
+  const policyDigest = digestJson(policy)
   const evidenceDigest = digestJson(evidence)
   const decisionCore = {
     schemaVersion: '0.1',
@@ -157,6 +187,7 @@ export function evaluateCandidate(rawPolicy, rawEvidence) {
       weightedRetentionLoss: averageWeightedRetentionLoss,
       costIncreaseRatio,
     },
+    policyDigest,
     evidenceDigest,
   }
 
@@ -169,13 +200,14 @@ export function evaluateCandidate(rawPolicy, rawEvidence) {
 /** @param {Record<string, unknown>} raw */
 function normalizePolicy(raw) {
   assertRecord(raw, 'policy')
+  assertAllowedKeys(raw, POLICY_KEYS, 'policy')
 
   const policy = {
     ...DEFAULT_POLICY,
     ...raw,
   }
 
-  return {
+  const normalized = {
     minimumCurrentImprovement: numberField(
       policy.minimumCurrentImprovement,
       'policy.minimumCurrentImprovement',
@@ -200,16 +232,29 @@ function normalizePolicy(raw) {
             'policy.maximumCostIncreaseRatio',
           ),
   }
+
+  assertUniqueStrings(
+    normalized.failOnValiditySeverities,
+    'policy.failOnValiditySeverities',
+  )
+  return normalized
 }
 
 /** @param {Record<string, unknown>} raw */
 function normalizeEvidence(raw) {
   assertRecord(raw, 'evidence')
+  assertAllowedKeys(raw, EVIDENCE_KEYS, 'evidence')
 
   const currentTask = recordField(raw.currentTask, 'evidence.currentTask')
+  assertAllowedKeys(currentTask, CURRENT_TASK_KEYS, 'evidence.currentTask')
   const retention = arrayField(raw.retention, 'evidence.retention').map(
     (entry, index) => {
       const anchor = recordField(entry, `evidence.retention[${index}]`)
+      assertAllowedKeys(
+        anchor,
+        RETENTION_KEYS,
+        `evidence.retention[${index}]`,
+      )
       return {
         anchorId: stringField(
           anchor.anchorId,
@@ -247,10 +292,19 @@ function normalizeEvidence(raw) {
       }
     },
   )
+  assertUniqueStrings(
+    retention.map((anchor) => anchor.anchorId),
+    'evidence.retention anchorId',
+  )
 
   const validity = arrayField(raw.validity, 'evidence.validity').map(
     (entry, index) => {
       const check = recordField(entry, `evidence.validity[${index}]`)
+      assertAllowedKeys(
+        check,
+        VALIDITY_KEYS,
+        `evidence.validity[${index}]`,
+      )
       return {
         checkId: stringField(
           check.checkId,
@@ -274,10 +328,15 @@ function normalizeEvidence(raw) {
       }
     },
   )
+  assertUniqueStrings(
+    validity.map((check) => check.checkId),
+    'evidence.validity checkId',
+  )
 
   let cost = null
   if (raw.cost !== undefined && raw.cost !== null) {
     const costRecord = recordField(raw.cost, 'evidence.cost')
+    assertAllowedKeys(costRecord, COST_KEYS, 'evidence.cost')
     cost = {
       baseline: nonNegativeNumberField(
         costRecord.baseline,
@@ -287,6 +346,33 @@ function normalizeEvidence(raw) {
         costRecord.candidate,
         'evidence.cost.candidate',
       ),
+    }
+  }
+
+  if (raw.schemaVersion !== undefined && raw.schemaVersion !== '0.1') {
+    throw new TypeError('evidence.schemaVersion must equal "0.1".')
+  }
+
+  const requiredAnchorIds =
+    raw.requiredAnchorIds === undefined
+      ? retention
+          .filter((anchor) => anchor.required)
+          .map((anchor) => anchor.anchorId)
+      : stringArrayField(
+          raw.requiredAnchorIds,
+          'evidence.requiredAnchorIds',
+        )
+  assertUniqueStrings(requiredAnchorIds, 'evidence.requiredAnchorIds')
+
+  const anchorsById = new Map(
+    retention.map((anchor) => [anchor.anchorId, anchor]),
+  )
+  for (const requiredAnchorId of requiredAnchorIds) {
+    const anchor = anchorsById.get(requiredAnchorId)
+    if (anchor?.required === false) {
+      throw new TypeError(
+        `evidence retention anchor ${requiredAnchorId} cannot be both required and optional.`,
+      )
     }
   }
 
@@ -318,13 +404,7 @@ function normalizeEvidence(raw) {
         'evidence.currentTask.candidateScore',
       ),
     },
-    requiredAnchorIds:
-      raw.requiredAnchorIds === undefined
-        ? retention.filter((anchor) => anchor.required).map((anchor) => anchor.anchorId)
-        : stringArrayField(
-            raw.requiredAnchorIds,
-            'evidence.requiredAnchorIds',
-          ),
+    requiredAnchorIds,
     retention,
     validity,
     cost,
@@ -351,6 +431,24 @@ function formatNumber(value) {
 function assertRecord(value, path) {
   if (value === null || typeof value !== 'object' || Array.isArray(value)) {
     throw new TypeError(`${path} must be an object.`)
+  }
+}
+
+function assertAllowedKeys(record, allowedKeys, path) {
+  for (const key of Object.keys(record)) {
+    if (!allowedKeys.has(key)) {
+      throw new TypeError(`${path}.${key} is not allowed.`)
+    }
+  }
+}
+
+function assertUniqueStrings(values, path) {
+  const seen = new Set()
+  for (const value of values) {
+    if (seen.has(value)) {
+      throw new TypeError(`${path} must not contain duplicate value ${value}.`)
+    }
+    seen.add(value)
   }
 }
 

@@ -44,7 +44,7 @@ test('rejects a missing required anchor', () => {
   )
 })
 
-test('protects anchors listed as required even if evidence marks them optional', () => {
+test('refuses anchors marked as both required and optional', () => {
   const evidence = structuredClone(passingEvidence)
   const requiredAnchor = evidence.retention.find(
     (anchor) => anchor.anchorId === 'anchor-citation-fidelity',
@@ -52,15 +52,13 @@ test('protects anchors listed as required even if evidence marks them optional',
   requiredAnchor.required = false
   requiredAnchor.candidateScore = 0
 
-  const decision = evaluateCandidate(
-    { ...policy, maximumWeightedRetentionLoss: 1 },
-    evidence,
-  )
-  assert.equal(decision.accepted, false)
-  assert.ok(
-    decision.reasons.some(
-      (reason) => reason.code === 'REQUIRED_ANCHOR_REGRESSION',
-    ),
+  assert.throws(
+    () =>
+      evaluateCandidate(
+        { ...policy, maximumWeightedRetentionLoss: 1 },
+        evidence,
+      ),
+    /cannot be both required and optional/,
   )
 })
 
@@ -108,6 +106,19 @@ test('decision digest is deterministic across object key order', () => {
   assert.equal(first.decisionDigest, second.decisionDigest)
 })
 
+test('decision digest is bound to the normalized policy', () => {
+  const first = evaluateCandidate(policy, passingEvidence)
+  const second = evaluateCandidate(
+    { ...policy, maximumCostIncreaseRatio: 0.24 },
+    passingEvidence,
+  )
+
+  assert.equal(first.accepted, true)
+  assert.equal(second.accepted, true)
+  assert.notEqual(first.policyDigest, second.policyDigest)
+  assert.notEqual(first.decisionDigest, second.decisionDigest)
+})
+
 test('handles a zero-cost baseline without emitting non-JSON numbers', () => {
   const evidence = structuredClone(passingEvidence)
   evidence.cost = { baseline: 0, candidate: 0.01 }
@@ -124,6 +135,45 @@ test('throws on malformed evidence instead of silently accepting it', () => {
   assert.throws(
     () => evaluateCandidate(policy, { candidateId: 'bad' }),
     /currentTask must be an object/,
+  )
+})
+
+test('refuses unsupported schema versions and unknown fields', () => {
+  assert.throws(
+    () =>
+      evaluateCandidate(policy, {
+        ...passingEvidence,
+        schemaVersion: '999',
+      }),
+    /schemaVersion must equal "0.1"/,
+  )
+  assert.throws(
+    () =>
+      evaluateCandidate(policy, {
+        ...passingEvidence,
+        unrecognized: true,
+      }),
+    /evidence\.unrecognized is not allowed/,
+  )
+  assert.throws(
+    () => evaluateCandidate({ ...policy, unrecognized: true }, passingEvidence),
+    /policy\.unrecognized is not allowed/,
+  )
+})
+
+test('refuses duplicate anchor and validity identifiers', () => {
+  const duplicateAnchor = structuredClone(passingEvidence)
+  duplicateAnchor.retention.push(structuredClone(duplicateAnchor.retention[0]))
+  assert.throws(
+    () => evaluateCandidate(policy, duplicateAnchor),
+    /retention anchorId must not contain duplicate/,
+  )
+
+  const duplicateCheck = structuredClone(passingEvidence)
+  duplicateCheck.validity.push(structuredClone(duplicateCheck.validity[0]))
+  assert.throws(
+    () => evaluateCandidate(policy, duplicateCheck),
+    /validity checkId must not contain duplicate/,
   )
 })
 
