@@ -98,6 +98,11 @@ and its [implementation-neutral vectors](conformance/jcs-sha256-v0.1.json)
 are reviewable prerequisites. They do not change the existing v0.1 gate
 digests or define RunnerBinding by themselves.
 
+The same vectors run through the built-in Node implementation and a pinned,
+test-only Python RFC 8785 oracle on Linux and Windows. See the
+[digest-profile documentation](docs/jcs-sha256-profile.md) for the local
+Python command.
+
 ## Install from GitHub
 
 The package is not published to the npm registry yet. Install the pinned GitHub
