@@ -28,6 +28,18 @@ UTF-8 bytes in hexadecimal, and the expected digest. Rejection vectors include
 escaped-equivalent duplicate keys, non-JSON numeric tokens, and lone
 surrogates.
 
+The Node implementation and an independent Python oracle consume that same
+file. The Python consumer parses every JSON number as an IEEE-754 binary64
+value, rejects duplicate property names before `json.loads()` can overwrite
+them, and uses the test-only `rfc8785==0.1.4` package for canonicalization.
+
+Reproduce the Python check in an isolated environment:
+
+```bash
+python -m pip install --require-hashes -r conformance/python/requirements.lock
+python -m unittest discover -s conformance/python -p "test_*.py" -v
+```
+
 ## Important boundary
 
 This profile canonicalizes JSON documents only. It does not define the digest

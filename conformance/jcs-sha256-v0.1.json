@@ -48,6 +48,11 @@
       "errorCode": "INVALID_JSON"
     },
     {
+      "id": "overflow-to-infinity",
+      "input": "{\"value\":1e400}",
+      "errorCode": "NON_FINITE_NUMBER"
+    },
+    {
       "id": "lone-high-surrogate",
       "input": "{\"value\":\"\\ud800\"}",
       "errorCode": "LONE_SURROGATE"

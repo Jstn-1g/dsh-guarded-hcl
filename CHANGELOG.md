@@ -6,6 +6,8 @@ All notable changes to this project are documented here.
 
 - Added a draft, dependency-free RFC 8785 JCS + SHA-256 digest profile.
 - Added implementation-neutral accepted and rejected conformance vectors.
+- Added a hash-pinned Python oracle and Linux/Windows conformance CI over the
+  same vector file.
 - Preserved all existing v0.1 policy, evidence, and decision digest behavior.
 
 ## 0.1.0 — 2026-08-21
