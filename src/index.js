@@ -7,6 +7,7 @@ export {
   validateArtifactPath,
 } from './artifact.js'
 export {
+  JCS_SHA256_PROFILE,
   JcsError,
   canonicalizeJcs,
   canonicalizeJsonText,
@@ -14,4 +15,16 @@ export {
   digestJsonText,
   parseIJson,
 } from './jcs.js'
+export {
+  RUNNER_BINDING_CANDIDATE_ID_PATTERN,
+  RUNNER_BINDING_DIGEST_PROFILE,
+  RUNNER_BINDING_SCHEMA_URI,
+  RUNNER_BINDING_SCHEMA_URI_PATTERN,
+  RUNNER_BINDING_SCHEMA_VERSION,
+  RunnerBindingError,
+  canonicalizeRunnerBinding,
+  digestRunnerBinding,
+  parseRunnerBinding,
+  validateRunnerBinding,
+} from './runner-binding.js'
 export { evaluateCandidate } from './gate.js'

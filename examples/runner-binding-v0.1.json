@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "0.1",
+  "candidateId": "runner/search-safe@1.0.0",
+  "artifact": {
+    "profile": "urn:dsh-guarded-hcl:digest-profile:artifact-jcs-sha256:v0.1",
+    "kind": "tree",
+    "digest": "sha256:c7302569210063ca77508b25c39f7914ef34283b0750e709eceec7e1d5cbbd66"
+  },
+  "selectionReceipt": {
+    "schemaUri": "https://example.org/schemas/selection-receipt-v0.1.schema.json",
+    "digestProfile": "urn:dsh-guarded-hcl:digest-profile:jcs-sha256:v0.1",
+    "digest": "sha256:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+  }
+}

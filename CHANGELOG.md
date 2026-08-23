@@ -14,6 +14,14 @@ All notable changes to this project are documented here.
   raw line endings, exact Unicode paths, UTF-8 path order, path-prefix and
   control-character rejection, representation domain separation, and rejected
   symlink/submodule entries.
+- Added a closed, versioned RunnerBinding v0.1 schema binding one opaque
+  candidate identifier to an artifact profile, representation kind, digest,
+  and a Selection Receipt schema URI, JCS profile, and digest.
+- Added dependency-free validation, duplicate-safe parsing, JCS
+  canonicalization and digest APIs, fail-closed tests, and a packaged example
+  for RunnerBinding v0.1. A test-only Ajv 2020-12 consumer verifies exact
+  schema/runtime acceptance parity for Unicode scalar candidate identifiers
+  and the versioned lowercase HTTPS-or-URN schema-identifier profile.
 - Preserved all existing v0.1 policy, evidence, and decision digest behavior.
 
 ## 0.1.0 — 2026-08-21
