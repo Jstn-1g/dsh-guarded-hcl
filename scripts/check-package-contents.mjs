@@ -1,13 +1,21 @@
 #!/usr/bin/env node
 import { spawnSync } from "node:child_process";
 
-const npm = process.platform === "win32" ? "npm.cmd" : "npm";
-const packed = spawnSync(npm, ["pack", "--dry-run", "--json"], {
+// npm exposes its JS entrypoint while running lifecycle scripts. Invoking that
+// entrypoint with the current Node binary avoids the platform-specific .cmd
+// spawning behavior that makes spawnSync("npm.cmd", ...) fail on Windows.
+const npmCli = process.env.npm_execpath;
+const command = npmCli ? process.execPath : "npm";
+const args = npmCli
+  ? [npmCli, "pack", "--dry-run", "--json"]
+  : ["pack", "--dry-run", "--json"];
+const packed = spawnSync(command, args, {
   encoding: "utf8",
 });
 
 if (packed.status !== 0) {
-  process.stderr.write(packed.stderr || packed.stdout);
+  const detail = packed.error?.message || packed.stderr || packed.stdout || "npm pack failed";
+  process.stderr.write(`${detail}\n`);
   process.exit(packed.status || 1);
 }
 
