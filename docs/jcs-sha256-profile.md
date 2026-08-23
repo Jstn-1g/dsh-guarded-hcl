@@ -40,17 +40,19 @@ python -m pip install --require-hashes -r conformance/python/requirements.lock
 python -m unittest discover -s conformance/python -p "test_*.py" -v
 ```
 
-The npm package intentionally ships only the shared vector file, the pinned
-Python lock file, and the Python conformance test so external consumers can
-reproduce the cross-runtime check. Virtual environments, test caches, bytecode,
-and other generated Python files are excluded from the package.
+The npm package includes this profile's shared vector and Python conformance
+test alongside the pinned Python lock file, so external consumers can
+reproduce the cross-runtime check. Virtual environments, test caches,
+bytecode, and other generated Python files are excluded from the package.
 
 ## Important boundary
 
-This profile canonicalizes JSON documents only. It does not define the digest
-of a source checkout, Git tree, symlink, executable mode, npm tarball, or other
-artifact. RunnerBinding must name a separate artifact digest profile and byte
-source for those objects.
+This profile canonicalizes JSON documents only. It does not by itself define
+the digest of a source checkout, Git tree, symlink, executable mode, npm
+tarball, or other artifact. The separate
+[artifact digest profile](artifact-sha256-profile.md) layers an exact byte and
+metadata manifest over JCS. RunnerBinding must explicitly name that artifact
+profile—or another reviewable profile—and its byte-source representation.
 
 The in-memory JavaScript API accepts only the JSON data model: primitives,
 dense arrays with indexed data properties, and plain objects with enumerable

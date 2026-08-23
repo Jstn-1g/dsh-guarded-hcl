@@ -43,6 +43,10 @@ evaluator fixtures are trusted only at their documented pinned revisions.
   of evaluation.
 - Pinned integrations must reject measurements or artifact identities outside
   the documented fixture boundary.
+- Artifact-profile producers must bind one immutable snapshot, preserve raw
+  bytes, exact Unicode path code points, and declared executable modes; they
+  must reject non-canonical paths, control characters, file/directory prefix
+  collisions, and unsupported entry types.
 
 ## Reportable Findings and Severity Context
 
@@ -72,9 +76,13 @@ break an invariant above:
 Digests provide deterministic identity, not authenticity: the project does not
 sign policies, evidence, decisions, or candidate artifacts. JSON Schemas are
 published as interoperability contracts, while runtime normalization is the
-enforcement boundary. Resource limits and provenance verification remain the
-responsibility of the invoking host. Integrations should keep policy ownership,
-evaluation, and activation under separate control and pin every external input.
+gate's enforcement boundary. The artifact profile validates but never
+normalizes caller-supplied paths, and does not acquire a snapshot or prove that
+the caller supplied every intended entry. Resource limits, snapshot
+completeness, canonical path production, and provenance verification remain
+the responsibility of the invoking host. Integrations should keep policy
+ownership, evaluation, and activation under separate control and pin every
+external input.
 
 ## Reporting a Vulnerability
 

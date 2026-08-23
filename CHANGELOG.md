@@ -8,6 +8,12 @@ All notable changes to this project are documented here.
 - Added implementation-neutral accepted and rejected conformance vectors.
 - Added a hash-pinned Python oracle and Linux/Windows conformance CI over the
   same vector file.
+- Added a draft artifact JCS + SHA-256 profile over immutable tree or blob
+  bytes, canonical relative POSIX paths, and regular/executable modes.
+- Added shared artifact vectors and independent Node/Python consumers covering
+  raw line endings, exact Unicode paths, UTF-8 path order, path-prefix and
+  control-character rejection, representation domain separation, and rejected
+  symlink/submodule entries.
 - Preserved all existing v0.1 policy, evidence, and decision digest behavior.
 
 ## 0.1.0 — 2026-08-21

@@ -89,19 +89,23 @@ The optimizer never owns its rubric or silently mutates cross-session state.
 See [`docs/design.md`](docs/design.md) for the proposed Cordis boundaries and
 threat model.
 
-### Draft portable JSON digest profile
+### Draft portable digest profiles
 
 Issue [#5](https://github.com/Jstn-1g/dsh-guarded-hcl/issues/5) requires a
-cross-runtime digest before RunnerBinding can be committed by a future
-evidence version. The draft [JCS + SHA-256 profile](docs/jcs-sha256-profile.md)
-and its [implementation-neutral vectors](conformance/jcs-sha256-v0.1.json)
-are reviewable prerequisites. They do not change the existing v0.1 gate
-digests or define RunnerBinding by themselves.
+cross-runtime JSON digest and an exact artifact byte identity before
+RunnerBinding can be committed by a future evidence version. The draft
+[JCS + SHA-256 profile](docs/jcs-sha256-profile.md) covers JSON documents. The
+separate [artifact profile](docs/artifact-sha256-profile.md) binds an immutable
+tree or packaged blob, including already-canonical POSIX paths, exact Unicode
+code points, raw bytes, and executable modes, while rejecting path ambiguity,
+symlinks, and submodules.
 
-The same vectors run through the built-in Node implementation and a pinned,
-test-only Python RFC 8785 oracle on Linux and Windows. See the
-[digest-profile documentation](docs/jcs-sha256-profile.md) for the local
-Python command.
+Both profiles publish implementation-neutral vectors under `conformance/`.
+The same vectors run through the built-in Node implementations and an
+independent, test-only Python consumer on Linux and Windows. They do not change
+the existing v0.1 gate digests or define RunnerBinding by themselves. See the
+[artifact-profile documentation](docs/artifact-sha256-profile.md) for the
+byte-source boundary and local Python command.
 
 ## Install from GitHub
 
