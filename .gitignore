@@ -2,6 +2,14 @@ node_modules/
 coverage/
 __pycache__/
 *.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.tox/
+.nox/
+*.egg-info/
 .DS_Store
 *.log
 *.tmp

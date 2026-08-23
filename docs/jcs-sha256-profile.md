@@ -40,6 +40,11 @@ python -m pip install --require-hashes -r conformance/python/requirements.lock
 python -m unittest discover -s conformance/python -p "test_*.py" -v
 ```
 
+The npm package intentionally ships only the shared vector file, the pinned
+Python lock file, and the Python conformance test so external consumers can
+reproduce the cross-runtime check. Virtual environments, test caches, bytecode,
+and other generated Python files are excluded from the package.
+
 ## Important boundary
 
 This profile canonicalizes JSON documents only. It does not define the digest

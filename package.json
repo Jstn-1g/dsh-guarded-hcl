@@ -39,7 +39,9 @@
   },
   "files": [
     "bin",
-    "conformance",
+    "conformance/jcs-sha256-v0.1.json",
+    "conformance/python/requirements.lock",
+    "conformance/python/test_jcs_sha256.py",
     "docs",
     "examples",
     "integrations",
