@@ -2,6 +2,7 @@ import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
 import test from 'node:test'
 import {
+  JCS_SHA256_PROFILE,
   JcsError,
   canonicalizeJcs,
   canonicalizeJsonText,
@@ -16,6 +17,8 @@ const vectors = JSON.parse(
     'utf8',
   ),
 )
+
+assert.equal(vectors.profile, JCS_SHA256_PROFILE)
 
 for (const vector of vectors.accepted) {
   test(`accepts JCS vector: ${vector.id}`, () => {

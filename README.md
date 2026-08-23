@@ -85,6 +85,7 @@ The optimizer never owns its rubric or silently mutates cross-session state.
 | [`evaluation-evidence.schema.json`](schemas/evaluation-evidence.schema.json) | Current-task, retention, validity, and cost evidence |
 | [`policy.schema.json`](schemas/policy.schema.json) | Code-owned thresholds the optimizer cannot rewrite implicitly |
 | [`decision.schema.json`](schemas/decision.schema.json) | Deterministic promotion or rejection result |
+| [`runner-binding-v0.1.schema.json`](schemas/runner-binding-v0.1.schema.json) | Exact candidate, artifact, and Selection Receipt audit binding |
 
 See [`docs/design.md`](docs/design.md) for the proposed Cordis boundaries and
 threat model.
@@ -92,8 +93,7 @@ threat model.
 ### Draft portable digest profiles
 
 Issue [#5](https://github.com/Jstn-1g/dsh-guarded-hcl/issues/5) requires a
-cross-runtime JSON digest and an exact artifact byte identity before
-RunnerBinding can be committed by a future evidence version. The draft
+cross-runtime JSON digest and an exact artifact byte identity. The draft
 [JCS + SHA-256 profile](docs/jcs-sha256-profile.md) covers JSON documents. The
 separate [artifact profile](docs/artifact-sha256-profile.md) binds an immutable
 tree or packaged blob, including already-canonical POSIX paths, exact Unicode
@@ -103,9 +103,34 @@ symlinks, and submodules.
 Both profiles publish implementation-neutral vectors under `conformance/`.
 The same vectors run through the built-in Node implementations and an
 independent, test-only Python consumer on Linux and Windows. They do not change
-the existing v0.1 gate digests or define RunnerBinding by themselves. See the
+the existing v0.1 gate digests. See the
 [artifact-profile documentation](docs/artifact-sha256-profile.md) for the
 byte-source boundary and local Python command.
+
+### RunnerBinding v0.1
+
+The versioned [RunnerBinding contract](docs/runner-binding-v0.1.md) combines
+those profiles into one closed audit document. It binds one opaque
+`candidateId` to the artifact profile, representation kind, and digest, plus a
+Selection Receipt schema URI, JCS digest profile, and digest. The
+dependency-free Node API validates, canonicalizes, and digests the document.
+Candidate identifiers preserve Unicode scalar values exactly, while schema
+identifiers use the contract's deterministic lowercase HTTPS-or-URN ASCII
+lexical profile. Ajv is used only in tests to prove JSON Schema/runtime
+acceptance parity.
+
+```js
+import { digestRunnerBinding } from 'dsh-guarded-hcl/runner-binding'
+import binding from './runner-binding-v0.1.json' with { type: 'json' }
+
+console.log(digestRunnerBinding(binding))
+```
+
+This is provenance/audit binding only. It does not add EvaluationEvidence
+v0.2, resolve the referenced artifact, receipt, or schema, authorize or
+activate a candidate, verify signatures, or add fields from ASM or any other
+selection system. Those later seams must compare resolved bytes and identifiers
+against the binding before a CommitDecision is produced.
 
 ## Install from GitHub
 
@@ -139,6 +164,7 @@ npx hcl-gate ./policy.json ./evaluation-evidence.json
 - required per-anchor and weighted retention checks;
 - severity-aware validity and optional cost-growth gates;
 - canonical SHA-256 policy, evidence, and decision digests;
+- a versioned RunnerBinding v0.1 schema and JCS digest API;
 - passing and deliberately regressing fixtures;
 - a pinned external `dsh-wm` evaluator conformance workflow;
 - Node's built-in test suite and GitHub Actions.
@@ -150,6 +176,8 @@ npx hcl-gate ./policy.json ./evaluation-evidence.json
 - no live Cordis adapter built against guessed interfaces;
 - no universal benchmark or prescribed optimizer;
 - no silent global or cross-session changes;
+- no external RunnerBinding resolution, authorization, signatures, or
+  activation;
 - no claim of reproducing the complete Harness Continual Learning paper.
 
 ## Contributing

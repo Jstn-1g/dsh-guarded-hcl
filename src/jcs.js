@@ -1,5 +1,8 @@
 import { createHash } from 'node:crypto'
 
+export const JCS_SHA256_PROFILE =
+  'urn:dsh-guarded-hcl:digest-profile:jcs-sha256:v0.1'
+
 /** Error raised when input cannot be represented by the JCS profile. */
 export class JcsError extends TypeError {
   constructor(code, message) {

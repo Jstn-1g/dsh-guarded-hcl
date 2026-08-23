@@ -28,6 +28,12 @@ const requiredConformance = [
   "conformance/python/test_jcs_sha256.py",
 ];
 const actualConformance = paths.filter((path) => path.startsWith("conformance/"));
+const requiredRunnerBinding = [
+  "docs/runner-binding-v0.1.md",
+  "examples/runner-binding-v0.1.json",
+  "schemas/runner-binding-v0.1.schema.json",
+  "src/runner-binding.js",
+];
 
 const forbidden = [
   /(^|\/)__pycache__(\/|$)/,
@@ -45,6 +51,13 @@ if (JSON.stringify(actualConformance) !== JSON.stringify(requiredConformance)) {
   console.error("unexpected conformance files in npm package:", actualConformance);
   process.exit(1);
 }
+const missingRunnerBinding = requiredRunnerBinding.filter(
+  (path) => !paths.includes(path),
+);
+if (missingRunnerBinding.length) {
+  console.error("RunnerBinding files missing from npm package:", missingRunnerBinding);
+  process.exit(1);
+}
 if (leaked.length) {
   console.error("generated or local files leaked into npm package:", leaked);
   process.exit(1);
@@ -52,5 +65,7 @@ if (leaked.length) {
 
 console.log(
   `npm package contents ok: ${paths.length} files; ` +
-    `${actualConformance.length} allowlisted conformance files; 0 generated-file leaks`,
+    `${actualConformance.length} allowlisted conformance files; ` +
+    `${requiredRunnerBinding.length} required RunnerBinding files; ` +
+    "0 generated-file leaks",
 );

@@ -2,9 +2,9 @@
 
 ## Status and scope
 
-This is the second independently reviewable digest prerequisite for the
-proposed RunnerBinding contract in issue #5. It defines portable identity for
-an exact artifact byte snapshot. It does not define RunnerBinding,
+This independently reviewable digest profile is selected by the versioned
+[RunnerBinding v0.1 contract](runner-binding-v0.1.md) from issue #5. It defines
+portable identity for an exact artifact byte snapshot. It does not define
 EvaluationEvidence v0.2, artifact resolution, or activation, and it does not
 change any v0.1 gate digest.
 

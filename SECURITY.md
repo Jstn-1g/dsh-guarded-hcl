@@ -47,6 +47,12 @@ evaluator fixtures are trusted only at their documented pinned revisions.
   bytes, exact Unicode path code points, and declared executable modes; they
   must reject non-canonical paths, control characters, file/directory prefix
   collisions, and unsupported entry types.
+- RunnerBinding validation must reject unknown, missing, malformed, or
+  unsupported identifier, profile, kind, schema-URI, and digest fields before
+  computing a binding digest.
+- RunnerBinding JSON Schema and runtime validation must agree for JSON-shaped
+  inputs, including Unicode scalar candidate identifiers and the exact
+  lowercase HTTPS-or-URN schema-identifier profile.
 
 ## Reportable Findings and Severity Context
 
@@ -75,14 +81,24 @@ break an invariant above:
 
 Digests provide deterministic identity, not authenticity: the project does not
 sign policies, evidence, decisions, or candidate artifacts. JSON Schemas are
-published as interoperability contracts, while runtime normalization is the
-gate's enforcement boundary. The artifact profile validates but never
-normalizes caller-supplied paths, and does not acquire a snapshot or prove that
-the caller supplied every intended entry. Resource limits, snapshot
-completeness, canonical path production, and provenance verification remain
-the responsibility of the invoking host. Integrations should keep policy
-ownership, evaluation, and activation under separate control and pin every
-external input.
+published as interoperability contracts, while runtime normalization and
+validation are the enforcement boundaries. The artifact profile validates but
+never normalizes caller-supplied paths, and does not acquire a snapshot or
+prove that the caller supplied every intended entry. Resource limits,
+snapshot completeness, canonical path production, and provenance verification
+remain the responsibility of the invoking host. Integrations should keep
+policy ownership, evaluation, and activation under separate control and pin
+every external input.
+
+RunnerBinding likewise validates only the supplied declaration. It does not
+resolve its schema URI, artifact, or Selection Receipt; recompute either
+referenced digest; compare its candidate identifier to another contract; grant
+authorization; activate code; or verify a signature. Those checks require
+explicit integration-owned inputs and remain outside RunnerBinding v0.1.
+Its schema-identifier grammar is intentionally narrower than the complete URI
+standards: other schemes, user information, bracketed IP literals, non-ASCII
+spellings, and ports outside canonical decimal 1–65535 are rejected even when
+a broader URI implementation might accept them.
 
 ## Reporting a Vulnerability
 

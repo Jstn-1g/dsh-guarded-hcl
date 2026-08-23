@@ -2,9 +2,10 @@
 
 ## Status and scope
 
-This is a reviewable prerequisite for the proposed RunnerBinding contract in
-issue #5. It does not yet define RunnerBinding or EvaluationEvidence v0.2 and
-does not change the v0.1 gate digests.
+This profile is selected by the versioned
+[RunnerBinding v0.1 contract](runner-binding-v0.1.md) from issue #5. It remains
+independently usable and does not define EvaluationEvidence v0.2 or change the
+v0.1 gate digests.
 
 The profile identifier is:
 

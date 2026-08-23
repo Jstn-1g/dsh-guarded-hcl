@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/Jstn-1g/dsh-guarded-hcl/main/schemas/runner-binding-v0.1.schema.json",
+  "title": "Guarded HCL RunnerBinding v0.1",
+  "description": "Audit/provenance binding between one candidate identifier, one exact artifact identity, and one Selection Receipt identity. This document is not authorization, activation, or a signature.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "candidateId", "artifact", "selectionReceipt"],
+  "properties": {
+    "schemaVersion": { "const": "0.1" },
+    "candidateId": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?:[\\u0000-\\uD7FF\\uE000-\\u{10FFFF}])+$",
+      "description": "Opaque, case-sensitive candidate or service identifier containing Unicode scalar values only. No trimming or Unicode normalization is applied."
+    },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["profile", "kind", "digest"],
+      "properties": {
+        "profile": {
+          "const": "urn:dsh-guarded-hcl:digest-profile:artifact-jcs-sha256:v0.1",
+          "description": "Exact artifact digest profile selected by RunnerBinding v0.1."
+        },
+        "kind": {
+          "enum": ["tree", "blob"],
+          "description": "Artifact representation from the named profile; tree and blob identities are domain-separated."
+        },
+        "digest": {
+          "$ref": "#/$defs/sha256Digest",
+          "description": "Digest of the exact artifact manifest produced under profile and kind."
+        }
+      }
+    },
+    "selectionReceipt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schemaUri", "digestProfile", "digest"],
+      "properties": {
+        "schemaUri": {
+          "type": "string",
+          "pattern": "^(?:https://[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:\\.[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)*(?::(?:[1-9][0-9]{0,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5]))?(?:/(?:[A-Za-z0-9._~!$&'()*+,;=:@-]|%[0-9A-Fa-f]{2})*)*(?:\\?(?:[A-Za-z0-9._~!$&'()*+,;=:@/?-]|%[0-9A-Fa-f]{2})*)?(?:#(?:[A-Za-z0-9._~!$&'()*+,;=:@/?-]|%[0-9A-Fa-f]{2})*)?|urn:[a-z0-9][a-z0-9-]{0,30}[a-z0-9]:(?:[A-Za-z0-9._~!$&'()*+,;=:@/-]|%[0-9A-Fa-f]{2})+(?:\\?(?:[A-Za-z0-9._~!$&'()*+,;=:@/?-]|%[0-9A-Fa-f]{2})*)?(?:#(?:[A-Za-z0-9._~!$&'()*+,;=:@/?-]|%[0-9A-Fa-f]{2})*)?)$",
+          "description": "Exact schema identifier under the RunnerBinding v0.1 lexical profile: lowercase https with a lowercase DNS-like host and optional canonical decimal port 1-65535, or lowercase urn with a lowercase namespace; ASCII path/query/fragment characters and valid percent escapes only. The value is never normalized or resolved."
+        },
+        "digestProfile": {
+          "const": "urn:dsh-guarded-hcl:digest-profile:jcs-sha256:v0.1",
+          "description": "Receipt JSON is parsed as I-JSON and digested after RFC 8785 JCS canonicalization."
+        },
+        "digest": {
+          "$ref": "#/$defs/sha256Digest",
+          "description": "Digest of the exact Selection Receipt JSON document under digestProfile."
+        }
+      }
+    }
+  },
+  "$defs": {
+    "sha256Digest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    }
+  }
+}
