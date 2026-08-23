@@ -1,0 +1,482 @@
+{
+  "profile": "urn:dsh-guarded-hcl:digest-profile:artifact-jcs-sha256:v0.1",
+  "accepted": [
+    {
+      "id": "empty-tree",
+      "input": {
+        "kind": "tree",
+        "entries": []
+      },
+      "manifest": {
+        "profile": "urn:dsh-guarded-hcl:digest-profile:artifact-jcs-sha256:v0.1",
+        "kind": "tree",
+        "entries": []
+      },
+      "sha256": "sha256:c7302569210063ca77508b25c39f7914ef34283b0750e709eceec7e1d5cbbd66"
+    },
+    {
+      "id": "nested-canonical-path-order",
+      "input": {
+        "kind": "tree",
+        "entries": [
+          {
+            "path": "docs/café.txt",
+            "mode": "100644",
+            "bytesHex": "636166c3a90a"
+          },
+          {
+            "path": "bin/run.sh",
+            "mode": "100755",
+            "bytesHex": "23212f62696e2f73680a"
+          }
+        ]
+      },
+      "manifest": {
+        "profile": "urn:dsh-guarded-hcl:digest-profile:artifact-jcs-sha256:v0.1",
+        "kind": "tree",
+        "entries": [
+          {
+            "path": "bin/run.sh",
+            "mode": "100755",
+            "byteLength": 10,
+            "contentDigest": "sha256:a8076d3d28d21e02012b20eaf7dbf75409a6277134439025f282e368e3305abf"
+          },
+          {
+            "path": "docs/café.txt",
+            "mode": "100644",
+            "byteLength": 6,
+            "contentDigest": "sha256:7b49b9e063bd91a4f9252b413261f5557b9c570aa61516989499f64a62dbcdd6"
+          }
+        ]
+      },
+      "sha256": "sha256:f5acad346a7e6adba65974627f1d81e36a9dee1088e265e85825f59c9d5e89b8"
+    },
+    {
+      "id": "nfc-path-preserved",
+      "input": {
+        "kind": "tree",
+        "entries": [
+          { "path": "café.txt", "mode": "100644", "bytesHex": "" }
+        ]
+      },
+      "manifest": {
+        "profile": "urn:dsh-guarded-hcl:digest-profile:artifact-jcs-sha256:v0.1",
+        "kind": "tree",
+        "entries": [
+          {
+            "path": "café.txt",
+            "mode": "100644",
+            "byteLength": 0,
+            "contentDigest": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ]
+      },
+      "sha256": "sha256:051ac1e667a1fc386bbb32961cf8785c9fe4d16e90dcfd5789749b2b1865c6ce"
+    },
+    {
+      "id": "nfd-path-preserved",
+      "distinctFrom": ["nfc-path-preserved"],
+      "input": {
+        "kind": "tree",
+        "entries": [
+          { "path": "café.txt", "mode": "100644", "bytesHex": "" }
+        ]
+      },
+      "manifest": {
+        "profile": "urn:dsh-guarded-hcl:digest-profile:artifact-jcs-sha256:v0.1",
+        "kind": "tree",
+        "entries": [
+          {
+            "path": "café.txt",
+            "mode": "100644",
+            "byteLength": 0,
+            "contentDigest": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ]
+      },
+      "sha256": "sha256:12af4ba9733389d499914378b3b93dccbda1f742f70722f8cfddf27c2785bac2"
+    },
+    {
+      "id": "unicode-version-stable-path",
+      "input": {
+        "kind": "tree",
+        "entries": [
+          { "path": "\u0897\u0334.txt", "mode": "100644", "bytesHex": "" }
+        ]
+      },
+      "manifest": {
+        "profile": "urn:dsh-guarded-hcl:digest-profile:artifact-jcs-sha256:v0.1",
+        "kind": "tree",
+        "entries": [
+          {
+            "path": "\u0897\u0334.txt",
+            "mode": "100644",
+            "byteLength": 0,
+            "contentDigest": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ]
+      },
+      "sha256": "sha256:d5b9174b98788a818b7f12133d0d181aef9d19931480b2980317c5a2c2c93c4d"
+    },
+    {
+      "id": "utf8-byte-path-order",
+      "input": {
+        "kind": "tree",
+        "entries": [
+          { "path": "𐀀.txt", "mode": "100644", "bytesHex": "" },
+          { "path": ".txt", "mode": "100644", "bytesHex": "" }
+        ]
+      },
+      "manifest": {
+        "profile": "urn:dsh-guarded-hcl:digest-profile:artifact-jcs-sha256:v0.1",
+        "kind": "tree",
+        "entries": [
+          {
+            "path": ".txt",
+            "mode": "100644",
+            "byteLength": 0,
+            "contentDigest": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "path": "𐀀.txt",
+            "mode": "100644",
+            "byteLength": 0,
+            "contentDigest": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ]
+      },
+      "sha256": "sha256:f91c463912e786eb737b64f155ea14e9ef7eae8ac234be7df479f2fc108bb088"
+    },
+    {
+      "id": "lf-raw-bytes",
+      "input": {
+        "kind": "tree",
+        "entries": [
+          {
+            "path": "bundle/index.js",
+            "mode": "100644",
+            "bytesHex": "6578706f7274207b7d0a"
+          }
+        ]
+      },
+      "manifest": {
+        "profile": "urn:dsh-guarded-hcl:digest-profile:artifact-jcs-sha256:v0.1",
+        "kind": "tree",
+        "entries": [
+          {
+            "path": "bundle/index.js",
+            "mode": "100644",
+            "byteLength": 10,
+            "contentDigest": "sha256:7992a39d6cde5e050eb78461a8bf9ad986175a94826e835c110b3967290bd249"
+          }
+        ]
+      },
+      "sha256": "sha256:b183e46a9f1a8d06933693f22292418c59744f384b7f6873fdebce291b816a3a"
+    },
+    {
+      "id": "crlf-raw-bytes",
+      "distinctFrom": ["lf-raw-bytes"],
+      "input": {
+        "kind": "tree",
+        "entries": [
+          {
+            "path": "bundle/index.js",
+            "mode": "100644",
+            "bytesHex": "6578706f7274207b7d0d0a"
+          }
+        ]
+      },
+      "manifest": {
+        "profile": "urn:dsh-guarded-hcl:digest-profile:artifact-jcs-sha256:v0.1",
+        "kind": "tree",
+        "entries": [
+          {
+            "path": "bundle/index.js",
+            "mode": "100644",
+            "byteLength": 11,
+            "contentDigest": "sha256:084ebb1b5115037aabf9f6fa51434ab57475bed47375168c1873c0f4e07f0506"
+          }
+        ]
+      },
+      "sha256": "sha256:a36e4c7b7d742f5ecda1a8392618d9aab1a4fafb74ebd64e0c67d4cf5f681fca"
+    },
+    {
+      "id": "regular-mode",
+      "input": {
+        "kind": "tree",
+        "entries": [
+          {
+            "path": "tool.sh",
+            "mode": "100644",
+            "bytesHex": "6563686f206f6b0a"
+          }
+        ]
+      },
+      "manifest": {
+        "profile": "urn:dsh-guarded-hcl:digest-profile:artifact-jcs-sha256:v0.1",
+        "kind": "tree",
+        "entries": [
+          {
+            "path": "tool.sh",
+            "mode": "100644",
+            "byteLength": 8,
+            "contentDigest": "sha256:4726de74e6ad02ddb5decee701960c06c6fd91a871f95238350941eed7dbb22a"
+          }
+        ]
+      },
+      "sha256": "sha256:3eefd4f95e3668a74eca95e1070f692608b0c0546fc7c037d5bbd5bc625b6a53"
+    },
+    {
+      "id": "executable-mode",
+      "distinctFrom": ["regular-mode"],
+      "input": {
+        "kind": "tree",
+        "entries": [
+          {
+            "path": "tool.sh",
+            "mode": "100755",
+            "bytesHex": "6563686f206f6b0a"
+          }
+        ]
+      },
+      "manifest": {
+        "profile": "urn:dsh-guarded-hcl:digest-profile:artifact-jcs-sha256:v0.1",
+        "kind": "tree",
+        "entries": [
+          {
+            "path": "tool.sh",
+            "mode": "100755",
+            "byteLength": 8,
+            "contentDigest": "sha256:4726de74e6ad02ddb5decee701960c06c6fd91a871f95238350941eed7dbb22a"
+          }
+        ]
+      },
+      "sha256": "sha256:f9ed30f05b5145226d6d92477fccd549e5745f0c29f4fe8734465bf64caf0c4c"
+    },
+    {
+      "id": "source-tree-representation",
+      "input": {
+        "kind": "tree",
+        "entries": [
+          {
+            "path": "package.tgz",
+            "mode": "100644",
+            "bytesHex": "7061796c6f6164"
+          }
+        ]
+      },
+      "manifest": {
+        "profile": "urn:dsh-guarded-hcl:digest-profile:artifact-jcs-sha256:v0.1",
+        "kind": "tree",
+        "entries": [
+          {
+            "path": "package.tgz",
+            "mode": "100644",
+            "byteLength": 7,
+            "contentDigest": "sha256:239f59ed55e737c77147cf55ad0c1b030b6d7ee748a7426952f9b852d5a935e5"
+          }
+        ]
+      },
+      "sha256": "sha256:8d0323b208d7350cda7b599470e6c68a4c01a1cf77ccf9d36e566f147b2b506d"
+    },
+    {
+      "id": "packaged-artifact-blob",
+      "distinctFrom": ["source-tree-representation"],
+      "input": {
+        "kind": "blob",
+        "bytesHex": "7061796c6f6164"
+      },
+      "manifest": {
+        "profile": "urn:dsh-guarded-hcl:digest-profile:artifact-jcs-sha256:v0.1",
+        "kind": "blob",
+        "byteLength": 7,
+        "contentDigest": "sha256:239f59ed55e737c77147cf55ad0c1b030b6d7ee748a7426952f9b852d5a935e5"
+      },
+      "sha256": "sha256:c30b1680a70b089845494c40eeaf37e81c2554d01022c4432fdd13ee1f749f32"
+    }
+  ],
+  "rejected": [
+    {
+      "id": "parent-traversal",
+      "input": {
+        "kind": "tree",
+        "entries": [
+          { "path": "a/../b", "mode": "100644", "bytesHex": "" }
+        ]
+      },
+      "errorCode": "INVALID_PATH"
+    },
+    {
+      "id": "dot-path-segment",
+      "input": {
+        "kind": "tree",
+        "entries": [
+          { "path": "a/./b", "mode": "100644", "bytesHex": "" }
+        ]
+      },
+      "errorCode": "INVALID_PATH"
+    },
+    {
+      "id": "empty-path-segment",
+      "input": {
+        "kind": "tree",
+        "entries": [
+          { "path": "a//b", "mode": "100644", "bytesHex": "" }
+        ]
+      },
+      "errorCode": "INVALID_PATH"
+    },
+    {
+      "id": "backslash-path-separator",
+      "input": {
+        "kind": "tree",
+        "entries": [
+          { "path": "a\\b", "mode": "100644", "bytesHex": "" }
+        ]
+      },
+      "errorCode": "INVALID_PATH"
+    },
+    {
+      "id": "absolute-posix-path",
+      "input": {
+        "kind": "tree",
+        "entries": [
+          { "path": "/a/b", "mode": "100644", "bytesHex": "" }
+        ]
+      },
+      "errorCode": "INVALID_PATH"
+    },
+    {
+      "id": "windows-drive-path",
+      "input": {
+        "kind": "tree",
+        "entries": [
+          { "path": "C:/a/b", "mode": "100644", "bytesHex": "" }
+        ]
+      },
+      "errorCode": "INVALID_PATH"
+    },
+    {
+      "id": "duplicate-path",
+      "input": {
+        "kind": "tree",
+        "entries": [
+          { "path": "lib/index.js", "mode": "100644", "bytesHex": "00" },
+          { "path": "lib/index.js", "mode": "100644", "bytesHex": "01" }
+        ]
+      },
+      "errorCode": "DUPLICATE_PATH"
+    },
+    {
+      "id": "file-directory-prefix-collision",
+      "input": {
+        "kind": "tree",
+        "entries": [
+          { "path": "a", "mode": "100644", "bytesHex": "00" },
+          { "path": "a/b", "mode": "100644", "bytesHex": "01" }
+        ]
+      },
+      "errorCode": "PATH_PREFIX_COLLISION"
+    },
+    {
+      "id": "symlink-mode",
+      "input": {
+        "kind": "tree",
+        "entries": [
+          { "path": "link", "mode": "120000", "bytesHex": "746172676574" }
+        ]
+      },
+      "errorCode": "UNSUPPORTED_ENTRY_TYPE"
+    },
+    {
+      "id": "submodule-mode",
+      "input": {
+        "kind": "tree",
+        "entries": [
+          { "path": "vendor", "mode": "160000", "bytesHex": "" }
+        ]
+      },
+      "errorCode": "UNSUPPORTED_ENTRY_TYPE"
+    },
+    {
+      "id": "directory-mode",
+      "input": {
+        "kind": "tree",
+        "entries": [
+          { "path": "empty", "mode": "040000", "bytesHex": "" }
+        ]
+      },
+      "errorCode": "UNSUPPORTED_ENTRY_TYPE"
+    },
+    {
+      "id": "unknown-file-mode",
+      "input": {
+        "kind": "tree",
+        "entries": [
+          { "path": "file", "mode": "100600", "bytesHex": "" }
+        ]
+      },
+      "errorCode": "INVALID_MODE"
+    },
+    {
+      "id": "c0-control-character-path",
+      "input": {
+        "kind": "tree",
+        "entries": [
+          { "path": "bad\u0000name", "mode": "100644", "bytesHex": "" }
+        ]
+      },
+      "errorCode": "INVALID_PATH"
+    },
+    {
+      "id": "delete-control-character-path",
+      "input": {
+        "kind": "tree",
+        "entries": [
+          { "path": "bad\u007fname", "mode": "100644", "bytesHex": "" }
+        ]
+      },
+      "errorCode": "INVALID_PATH"
+    },
+    {
+      "id": "c1-control-character-path-low",
+      "input": {
+        "kind": "tree",
+        "entries": [
+          { "path": "bad\u0080name", "mode": "100644", "bytesHex": "" }
+        ]
+      },
+      "errorCode": "INVALID_PATH"
+    },
+    {
+      "id": "c1-control-character-path-high",
+      "input": {
+        "kind": "tree",
+        "entries": [
+          { "path": "bad\u009fname", "mode": "100644", "bytesHex": "" }
+        ]
+      },
+      "errorCode": "INVALID_PATH"
+    },
+    {
+      "id": "lone-surrogate-path",
+      "input": {
+        "kind": "tree",
+        "entries": [
+          { "path": "bad\ud800name", "mode": "100644", "bytesHex": "" }
+        ]
+      },
+      "errorCode": "INVALID_PATH"
+    },
+    {
+      "id": "missing-tree-entries",
+      "input": { "kind": "tree" },
+      "errorCode": "INVALID_ARTIFACT"
+    },
+    {
+      "id": "unknown-artifact-kind",
+      "input": { "kind": "archive", "bytesHex": "00" },
+      "errorCode": "INVALID_ARTIFACT"
+    }
+  ]
+}

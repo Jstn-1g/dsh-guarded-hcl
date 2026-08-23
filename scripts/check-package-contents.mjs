@@ -21,8 +21,10 @@ if (packed.status !== 0) {
 
 const paths = JSON.parse(packed.stdout)[0].files.map((file) => file.path);
 const requiredConformance = [
+  "conformance/artifact-sha256-v0.1.json",
   "conformance/jcs-sha256-v0.1.json",
   "conformance/python/requirements.lock",
+  "conformance/python/test_artifact_sha256.py",
   "conformance/python/test_jcs_sha256.py",
 ];
 const actualConformance = paths.filter((path) => path.startsWith("conformance/"));
