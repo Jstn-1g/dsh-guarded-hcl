@@ -27,4 +27,11 @@ export {
   parseRunnerBinding,
   validateRunnerBinding,
 } from './runner-binding.js'
+export {
+  EVALUATION_EVIDENCE_V02_SCHEMA_URI,
+  EVALUATION_EVIDENCE_V02_SCHEMA_VERSION,
+  EvaluationEvidenceV02Error,
+  validateRunnerBindingRef,
+  verifyResolvedRunnerBinding,
+} from './evaluation-evidence-v0.2.js'
 export { evaluateCandidate } from './gate.js'

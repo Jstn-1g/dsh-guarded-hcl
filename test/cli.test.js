@@ -1,5 +1,13 @@
 import assert from 'node:assert/strict'
 import { spawnSync } from 'node:child_process'
+import {
+  mkdtempSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from 'node:fs'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
 import test from 'node:test'
 import { fileURLToPath } from 'node:url'
 
@@ -10,6 +18,12 @@ const passingEvidence = fileURLToPath(
 )
 const regressingEvidence = fileURLToPath(
   new URL('../examples/evaluation-regression.json', import.meta.url),
+)
+const v02Evidence = fileURLToPath(
+  new URL('../examples/evaluation-v0.2-pass.json', import.meta.url),
+)
+const runnerBinding = fileURLToPath(
+  new URL('../examples/runner-binding-v0.1.json', import.meta.url),
 )
 
 test('CLI accepts the passing fixture with exit status 0', () => {
@@ -32,8 +46,75 @@ test('CLI rejects the regression fixture with exit status 2', () => {
   )
 })
 
-function runCli(evidence) {
-  return spawnSync(process.execPath, [cli, policy, evidence], {
+test('CLI accepts v0.2 with a caller-supplied RunnerBinding path', () => {
+  const result = runCli(v02Evidence, runnerBinding)
+  assert.equal(result.status, 0)
+  assert.equal(result.stderr, '')
+  assert.equal(JSON.parse(result.stdout).accepted, true)
+})
+
+test('CLI fails v0.2 before a decision when RunnerBinding is absent', () => {
+  const result = runCli(v02Evidence)
+  assert.equal(result.status, 1)
+  assert.equal(result.stdout, '')
+  assert.match(result.stderr, /requires caller-supplied/u)
+})
+
+test('CLI fails closed when RunnerBinding accompanies explicit v0.1', () => {
+  const result = runCli(passingEvidence, runnerBinding)
+  assert.equal(result.status, 1)
+  assert.equal(result.stdout, '')
+  assert.match(result.stderr, /requires explicit EvaluationEvidence schemaVersion "0\.2"/u)
+})
+
+test('CLI fails closed when RunnerBinding accompanies omitted v0.1 version', () => {
+  const source = readFileSync(passingEvidence, 'utf8').replace(
+    '  "schemaVersion": "0.1",\n',
+    '',
+  )
+  const result = runCliSource(source, runnerBinding)
+  assert.equal(result.status, 1)
+  assert.equal(result.stdout, '')
+  assert.match(result.stderr, /requires explicit EvaluationEvidence schemaVersion "0\.2"/u)
+})
+
+test('CLI rejects literal duplicate binding-critical evidence names', () => {
+  const source = readFileSync(v02Evidence, 'utf8').replace(
+    '  "candidateId": "runner/search-safe@1.0.0",',
+    '  "candidateId": "runner/other@1.0.0",\n  "candidateId": "runner/search-safe@1.0.0",',
+  )
+  const result = runCliSource(source, runnerBinding)
+  assert.equal(result.status, 1)
+  assert.equal(result.stdout, '')
+  assert.match(result.stderr, /duplicate JSON property "candidateId"/iu)
+})
+
+test('CLI rejects escaped-equivalent duplicate binding-critical names', () => {
+  const source = readFileSync(v02Evidence, 'utf8').replace(
+    '  "runnerBindingRef": {',
+    '  "runnerBindingRef": {},\n  "runnerBinding\\u0052ef": {',
+  )
+  const result = runCliSource(source, runnerBinding)
+  assert.equal(result.status, 1)
+  assert.equal(result.stdout, '')
+  assert.match(result.stderr, /duplicate JSON property "runnerBindingRef"/iu)
+})
+
+function runCli(evidence, binding) {
+  const args = [cli, policy, evidence]
+  if (binding) args.push(binding)
+  return spawnSync(process.execPath, args, {
     encoding: 'utf8',
   })
+}
+
+function runCliSource(source, binding) {
+  const directory = mkdtempSync(join(tmpdir(), 'hcl-evidence-'))
+  const evidencePath = join(directory, 'evidence.json')
+  try {
+    writeFileSync(evidencePath, source, 'utf8')
+    return runCli(evidencePath, binding)
+  } finally {
+    rmSync(directory, { recursive: true, force: true })
+  }
 }

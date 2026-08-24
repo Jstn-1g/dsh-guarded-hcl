@@ -1,0 +1,4 @@
+# Contract sources and conformance fixtures have byte-stable LF checkouts.
+schemas/*.json text eol=lf
+conformance/*.json text eol=lf
+examples/*.json text eol=lf

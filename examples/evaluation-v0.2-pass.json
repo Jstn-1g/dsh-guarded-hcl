@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "0.2",
+  "candidateId": "runner/search-safe@1.0.0",
+  "baselineDigest": "sha256:baseline-example",
+  "candidateDigest": "sha256:c7302569210063ca77508b25c39f7914ef34283b0750e709eceec7e1d5cbbd66",
+  "runnerBindingRef": {
+    "schemaUri": "https://raw.githubusercontent.com/Jstn-1g/dsh-guarded-hcl/main/schemas/runner-binding-v0.1.schema.json",
+    "digestProfile": "urn:dsh-guarded-hcl:digest-profile:jcs-sha256:v0.1",
+    "digest": "sha256:7cd3ed8833e736b5a5aa88cf67e2cc8948015762e9caf5b843b825312b8b3c4a"
+  },
+  "currentTask": {
+    "metric": "task_success",
+    "baselineScore": 0.72,
+    "candidateScore": 0.81
+  },
+  "requiredAnchorIds": ["anchor-tool-permission", "anchor-citation-fidelity"],
+  "retention": [
+    {
+      "anchorId": "anchor-tool-permission",
+      "baselineScore": 1,
+      "candidateScore": 1,
+      "required": true,
+      "weight": 2,
+      "maximumLoss": 0
+    },
+    {
+      "anchorId": "anchor-citation-fidelity",
+      "baselineScore": 0.94,
+      "candidateScore": 0.94,
+      "required": true,
+      "weight": 1,
+      "maximumLoss": 0.01
+    }
+  ],
+  "validity": [
+    {
+      "checkId": "schema-valid",
+      "passed": true,
+      "severity": "critical"
+    },
+    {
+      "checkId": "permission-boundary",
+      "passed": true,
+      "severity": "critical"
+    }
+  ],
+  "cost": {
+    "baseline": 0.42,
+    "candidate": 0.47
+  }
+}

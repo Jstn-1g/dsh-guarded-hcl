@@ -83,6 +83,7 @@ The optimizer never owns its rubric or silently mutates cross-session state.
 | --- | --- |
 | [`candidate.schema.json`](schemas/candidate.schema.json) | Versioned optimizer proposal against an exact baseline |
 | [`evaluation-evidence.schema.json`](schemas/evaluation-evidence.schema.json) | Current-task, retention, validity, and cost evidence |
+| [`evaluation-evidence-v0.2.schema.json`](schemas/evaluation-evidence-v0.2.schema.json) | Evidence requiring one verified RunnerBinding reference before decision |
 | [`policy.schema.json`](schemas/policy.schema.json) | Code-owned thresholds the optimizer cannot rewrite implicitly |
 | [`decision.schema.json`](schemas/decision.schema.json) | Deterministic promotion or rejection result |
 | [`runner-binding-v0.1.schema.json`](schemas/runner-binding-v0.1.schema.json) | Exact candidate, artifact, and Selection Receipt audit binding |
@@ -127,10 +128,28 @@ console.log(digestRunnerBinding(binding))
 ```
 
 This is provenance/audit binding only. It does not add EvaluationEvidence
-v0.2, resolve the referenced artifact, receipt, or schema, authorize or
-activate a candidate, verify signatures, or add fields from ASM or any other
-selection system. Those later seams must compare resolved bytes and identifiers
-against the binding before a CommitDecision is produced.
+v0.2 by itself, resolve the referenced artifact, receipt, or schema, authorize
+or activate a candidate, verify signatures, or add fields from ASM or any
+other selection system.
+
+### EvaluationEvidence v0.2
+
+The separate
+[EvaluationEvidence v0.2 contract](docs/evaluation-evidence-v0.2.md) adds one
+required RunnerBinding schema URI, digest profile, and digest reference. The
+caller supplies the already-resolved binding as a third API argument or an
+optional third CLI path. The gate validates and re-digests it, then checks that
+its candidate identifier and artifact digest match the evidence before any
+CommitDecision is produced.
+
+```js
+const decision = evaluateCandidate(policy, evidenceV02, { runnerBinding })
+```
+
+No network resolver is included. EvaluationEvidence v0.1 keeps its original
+closed field set, normalized bytes, digests, two-argument API, and CLI behavior.
+Supplying a RunnerBinding with v0.1 evidence fails closed, and CLI evidence
+parsing rejects literal or escaped-equivalent duplicate property names.
 
 ## Install from GitHub
 
@@ -165,6 +184,8 @@ npx hcl-gate ./policy.json ./evaluation-evidence.json
 - severity-aware validity and optional cost-growth gates;
 - canonical SHA-256 policy, evidence, and decision digests;
 - a versioned RunnerBinding v0.1 schema and JCS digest API;
+- a versioned EvaluationEvidence v0.2 schema with deterministic,
+  caller-supplied RunnerBinding verification;
 - passing and deliberately regressing fixtures;
 - a pinned external `dsh-wm` evaluator conformance workflow;
 - Node's built-in test suite and GitHub Actions.
@@ -176,8 +197,7 @@ npx hcl-gate ./policy.json ./evaluation-evidence.json
 - no live Cordis adapter built against guessed interfaces;
 - no universal benchmark or prescribed optimizer;
 - no silent global or cross-session changes;
-- no external RunnerBinding resolution, authorization, signatures, or
-  activation;
+- no network RunnerBinding resolver, authorization, signatures, or activation;
 - no claim of reproducing the complete Harness Continual Learning paper.
 
 ## Contributing

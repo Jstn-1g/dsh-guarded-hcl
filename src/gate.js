@@ -1,4 +1,10 @@
 import { digestJson } from './canonical.js'
+import {
+  EVALUATION_EVIDENCE_V02_SCHEMA_VERSION,
+  EvaluationEvidenceV02Error,
+  validateRunnerBindingRef,
+  verifyResolvedRunnerBinding,
+} from './evaluation-evidence-v0.2.js'
 
 const DEFAULT_POLICY = Object.freeze({
   minimumCurrentImprovement: 0,
@@ -9,7 +15,7 @@ const DEFAULT_POLICY = Object.freeze({
 })
 
 const POLICY_KEYS = new Set(Object.keys(DEFAULT_POLICY))
-const EVIDENCE_KEYS = new Set([
+const EVIDENCE_V01_KEYS = new Set([
   'schemaVersion',
   'candidateId',
   'baselineDigest',
@@ -19,6 +25,10 @@ const EVIDENCE_KEYS = new Set([
   'retention',
   'validity',
   'cost',
+])
+const EVIDENCE_V02_KEYS = new Set([
+  ...EVIDENCE_V01_KEYS,
+  'runnerBindingRef',
 ])
 const CURRENT_TASK_KEYS = new Set([
   'metric',
@@ -42,6 +52,7 @@ const COST_KEYS = new Set(['baseline', 'candidate'])
  *
  * @param {Record<string, unknown>} rawPolicy
  * @param {Record<string, unknown>} rawEvidence
+ * @param {{runnerBinding: unknown} | undefined} [resolutionInput]
  * @returns {{
  *   schemaVersion: string,
  *   accepted: boolean,
@@ -53,9 +64,21 @@ const COST_KEYS = new Set(['baseline', 'candidate'])
  *   decisionDigest: string
  * }}
  */
-export function evaluateCandidate(rawPolicy, rawEvidence) {
+export function evaluateCandidate(rawPolicy, rawEvidence, resolutionInput) {
   const policy = normalizePolicy(rawPolicy)
   const evidence = normalizeEvidence(rawEvidence)
+  if (
+    resolutionInput !== undefined &&
+    evidence.schemaVersion !== EVALUATION_EVIDENCE_V02_SCHEMA_VERSION
+  ) {
+    throw new EvaluationEvidenceV02Error(
+      'RUNNER_BINDING_REQUIRES_EVIDENCE_V02',
+      'RunnerBinding resolution requires explicit EvaluationEvidence schemaVersion "0.2".',
+    )
+  }
+  if (evidence.schemaVersion === EVALUATION_EVIDENCE_V02_SCHEMA_VERSION) {
+    verifyResolvedRunnerBinding(evidence, resolutionInput)
+  }
   const reasons = []
 
   const rawCurrentImprovement =
@@ -243,7 +266,21 @@ function normalizePolicy(raw) {
 /** @param {Record<string, unknown>} raw */
 function normalizeEvidence(raw) {
   assertRecord(raw, 'evidence')
-  assertAllowedKeys(raw, EVIDENCE_KEYS, 'evidence')
+  const schemaVersion =
+    raw.schemaVersion === undefined
+      ? '0.1'
+      : stringField(raw.schemaVersion, 'evidence.schemaVersion')
+  if (
+    schemaVersion !== '0.1' &&
+    schemaVersion !== EVALUATION_EVIDENCE_V02_SCHEMA_VERSION
+  ) {
+    throw new TypeError('evidence.schemaVersion must equal "0.1" or "0.2".')
+  }
+  assertAllowedKeys(
+    raw,
+    schemaVersion === '0.1' ? EVIDENCE_V01_KEYS : EVIDENCE_V02_KEYS,
+    'evidence',
+  )
 
   const currentTask = recordField(raw.currentTask, 'evidence.currentTask')
   assertAllowedKeys(currentTask, CURRENT_TASK_KEYS, 'evidence.currentTask')
@@ -349,10 +386,6 @@ function normalizeEvidence(raw) {
     }
   }
 
-  if (raw.schemaVersion !== undefined && raw.schemaVersion !== '0.1') {
-    throw new TypeError('evidence.schemaVersion must equal "0.1".')
-  }
-
   const requiredAnchorIds =
     raw.requiredAnchorIds === undefined
       ? retention
@@ -376,11 +409,8 @@ function normalizeEvidence(raw) {
     }
   }
 
-  return {
-    schemaVersion:
-      raw.schemaVersion === undefined
-        ? '0.1'
-        : stringField(raw.schemaVersion, 'evidence.schemaVersion'),
+  const normalized = {
+    schemaVersion,
     candidateId: stringField(raw.candidateId, 'evidence.candidateId'),
     baselineDigest: stringField(
       raw.baselineDigest,
@@ -409,6 +439,14 @@ function normalizeEvidence(raw) {
     validity,
     cost,
   }
+
+  if (schemaVersion === EVALUATION_EVIDENCE_V02_SCHEMA_VERSION) {
+    return {
+      ...normalized,
+      runnerBindingRef: validateRunnerBindingRef(raw.runnerBindingRef),
+    }
+  }
+  return normalized
 }
 
 function roundMetric(value) {
