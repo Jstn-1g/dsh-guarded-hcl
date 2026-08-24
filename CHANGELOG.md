@@ -22,6 +22,11 @@ All notable changes to this project are documented here.
   for RunnerBinding v0.1. A test-only Ajv 2020-12 consumer verifies exact
   schema/runtime acceptance parity for Unicode scalar candidate identifiers
   and the versioned lowercase HTTPS-or-URN schema-identifier profile.
+- Added a closed EvaluationEvidence v0.2 schema with a required RunnerBinding
+  schema URI, digest profile, and digest reference.
+- Added deterministic caller-supplied RunnerBinding verification before
+  CommitDecision, including digest, candidate identifier, and artifact digest
+  matching plus a local CLI binding path.
 - Preserved all existing v0.1 policy, evidence, and decision digest behavior.
 
 ## 0.1.0 — 2026-08-21

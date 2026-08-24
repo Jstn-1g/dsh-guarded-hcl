@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/Jstn-1g/dsh-guarded-hcl/main/schemas/evaluation-evidence-v0.2.schema.json",
+  "title": "Guarded HCL Evaluation Evidence v0.2",
+  "description": "Evaluation evidence bound to one exact RunnerBinding before CommitDecision. Resolution is caller-supplied; this document is not authorization, activation, or a signature.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "candidateId",
+    "baselineDigest",
+    "candidateDigest",
+    "runnerBindingRef",
+    "currentTask",
+    "retention",
+    "validity"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "0.2" },
+    "candidateId": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?:[\\u0000-\\uD7FF\\uE000-\\u{10FFFF}])+$"
+    },
+    "baselineDigest": { "type": "string", "minLength": 1 },
+    "candidateDigest": { "$ref": "#/$defs/sha256Digest" },
+    "runnerBindingRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schemaUri", "digestProfile", "digest"],
+      "properties": {
+        "schemaUri": {
+          "const": "https://raw.githubusercontent.com/Jstn-1g/dsh-guarded-hcl/main/schemas/runner-binding-v0.1.schema.json"
+        },
+        "digestProfile": {
+          "const": "urn:dsh-guarded-hcl:digest-profile:jcs-sha256:v0.1"
+        },
+        "digest": { "$ref": "#/$defs/sha256Digest" }
+      }
+    },
+    "currentTask": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["metric", "baselineScore", "candidateScore"],
+      "properties": {
+        "metric": { "type": "string", "minLength": 1 },
+        "baselineScore": { "type": "number" },
+        "candidateScore": { "type": "number" }
+      }
+    },
+    "requiredAnchorIds": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "retention": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["anchorId", "baselineScore", "candidateScore"],
+        "properties": {
+          "anchorId": { "type": "string", "minLength": 1 },
+          "baselineScore": { "type": "number" },
+          "candidateScore": { "type": "number" },
+          "required": { "type": "boolean", "default": true },
+          "weight": { "type": "number", "exclusiveMinimum": 0, "default": 1 },
+          "maximumLoss": { "type": "number", "minimum": 0, "default": 0 }
+        }
+      }
+    },
+    "validity": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["checkId", "passed", "severity"],
+        "properties": {
+          "checkId": { "type": "string", "minLength": 1 },
+          "passed": { "type": "boolean" },
+          "severity": { "type": "string", "minLength": 1 },
+          "details": { "type": "string" }
+        }
+      }
+    },
+    "cost": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["baseline", "candidate"],
+          "properties": {
+            "baseline": { "type": "number", "minimum": 0 },
+            "candidate": { "type": "number", "minimum": 0 }
+          }
+        },
+        { "type": "null" }
+      ]
+    }
+  },
+  "$defs": {
+    "sha256Digest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    }
+  }
+}

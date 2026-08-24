@@ -34,6 +34,12 @@ const requiredRunnerBinding = [
   "schemas/runner-binding-v0.1.schema.json",
   "src/runner-binding.js",
 ];
+const requiredEvaluationEvidenceV02 = [
+  "docs/evaluation-evidence-v0.2.md",
+  "examples/evaluation-v0.2-pass.json",
+  "schemas/evaluation-evidence-v0.2.schema.json",
+  "src/evaluation-evidence-v0.2.js",
+];
 
 const forbidden = [
   /(^|\/)__pycache__(\/|$)/,
@@ -58,6 +64,16 @@ if (missingRunnerBinding.length) {
   console.error("RunnerBinding files missing from npm package:", missingRunnerBinding);
   process.exit(1);
 }
+const missingEvaluationEvidenceV02 = requiredEvaluationEvidenceV02.filter(
+  (path) => !paths.includes(path),
+);
+if (missingEvaluationEvidenceV02.length) {
+  console.error(
+    "EvaluationEvidence v0.2 files missing from npm package:",
+    missingEvaluationEvidenceV02,
+  );
+  process.exit(1);
+}
 if (leaked.length) {
   console.error("generated or local files leaked into npm package:", leaked);
   process.exit(1);
@@ -67,5 +83,6 @@ console.log(
   `npm package contents ok: ${paths.length} files; ` +
     `${actualConformance.length} allowlisted conformance files; ` +
     `${requiredRunnerBinding.length} required RunnerBinding files; ` +
+    `${requiredEvaluationEvidenceV02.length} required EvaluationEvidence v0.2 files; ` +
     "0 generated-file leaks",
 );
