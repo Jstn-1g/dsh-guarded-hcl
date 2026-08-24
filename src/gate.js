@@ -1,6 +1,7 @@
 import { digestJson } from './canonical.js'
 import {
   EVALUATION_EVIDENCE_V02_SCHEMA_VERSION,
+  EvaluationEvidenceV02Error,
   validateRunnerBindingRef,
   verifyResolvedRunnerBinding,
 } from './evaluation-evidence-v0.2.js'
@@ -66,6 +67,15 @@ const COST_KEYS = new Set(['baseline', 'candidate'])
 export function evaluateCandidate(rawPolicy, rawEvidence, resolutionInput) {
   const policy = normalizePolicy(rawPolicy)
   const evidence = normalizeEvidence(rawEvidence)
+  if (
+    resolutionInput !== undefined &&
+    evidence.schemaVersion !== EVALUATION_EVIDENCE_V02_SCHEMA_VERSION
+  ) {
+    throw new EvaluationEvidenceV02Error(
+      'RUNNER_BINDING_REQUIRES_EVIDENCE_V02',
+      'RunnerBinding resolution requires explicit EvaluationEvidence schemaVersion "0.2".',
+    )
+  }
   if (evidence.schemaVersion === EVALUATION_EVIDENCE_V02_SCHEMA_VERSION) {
     verifyResolvedRunnerBinding(evidence, resolutionInput)
   }

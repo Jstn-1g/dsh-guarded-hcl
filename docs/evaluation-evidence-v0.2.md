@@ -13,7 +13,8 @@ The versioned schema is
 [`evaluation-evidence-v0.2.schema.json`](../schemas/evaluation-evidence-v0.2.schema.json).
 The existing [`evaluation-evidence.schema.json`](../schemas/evaluation-evidence.schema.json)
 and all EvaluationEvidence v0.1 normalization, digest, decision, and CLI
-behavior remain unchanged.
+two-argument behavior remain unchanged. Supplying a RunnerBinding resolution
+with v0.1 evidence now fails closed instead of silently ignoring the binding.
 
 This contract is deterministic audit/provenance binding. It does not fetch a
 URI, resolve a mutable registry, authorize execution, verify a signature,
@@ -70,13 +71,19 @@ The optional third CLI path supplies the same deterministic input:
 hcl-gate policy.json evaluation-v0.2.json runner-binding-v0.1.json
 ```
 
+The CLI parses evidence as duplicate-safe I-JSON. Literal and
+escaped-equivalent duplicate property names are rejected before normalization.
+
 ## v0.1 compatibility boundary
 
 Evidence without `schemaVersion`, or with `schemaVersion: "0.1"`, still uses
 the original closed field set and does not accept `runnerBindingRef`. Its
 normalized evidence, evidence digest, decision body, decision digest, and
 two-argument API/CLI behavior are byte-for-byte unchanged. The v0.2 binding
-check is entered only for an explicit `schemaVersion: "0.2"` document.
+check is entered only for an explicit `schemaVersion: "0.2"` document. If a
+caller supplies resolution input with explicit or implicit v0.1 evidence, the
+gate rejects the call before CommitDecision so an ignored binding cannot be
+mistaken for a verified binding.
 
 The resulting CommitDecision remains the existing v0.1 decision shape. This
 slice changes the precondition for producing that decision; it does not define

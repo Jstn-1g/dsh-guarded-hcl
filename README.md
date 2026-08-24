@@ -148,6 +148,8 @@ const decision = evaluateCandidate(policy, evidenceV02, { runnerBinding })
 
 No network resolver is included. EvaluationEvidence v0.1 keeps its original
 closed field set, normalized bytes, digests, two-argument API, and CLI behavior.
+Supplying a RunnerBinding with v0.1 evidence fails closed, and CLI evidence
+parsing rejects literal or escaped-equivalent duplicate property names.
 
 ## Install from GitHub
 

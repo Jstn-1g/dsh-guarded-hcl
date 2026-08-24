@@ -187,10 +187,6 @@ test('keeps v0.1 schema bytes and decision digests unchanged', () => {
   )
 
   const passing = evaluateCandidate(policy, v01Evidence)
-  const withIgnoredResolution = evaluateCandidate(policy, v01Evidence, {
-    runnerBinding: { invalid: true },
-  })
-  assert.deepEqual(withIgnoredResolution, passing)
   assert.equal(
     passing.evidenceDigest,
     'sha256:d36eba5a70dbbfee52e39b0d62b54028680b2182fd52781d3ed2ccb27a8e6bd4',
@@ -217,6 +213,20 @@ test('keeps v0.1 schema bytes and decision digests unchanged', () => {
         runnerBindingRef: evidence.runnerBindingRef,
       }),
     /evidence\.runnerBindingRef is not allowed/u,
+  )
+})
+
+test('fails closed when resolution input accompanies v0.1 evidence', () => {
+  assertCode(
+    () => evaluateCandidate(policy, v01Evidence, { runnerBinding: binding }),
+    'RUNNER_BINDING_REQUIRES_EVIDENCE_V02',
+  )
+
+  const omittedVersion = structuredClone(v01Evidence)
+  delete omittedVersion.schemaVersion
+  assertCode(
+    () => evaluateCandidate(policy, omittedVersion, { runnerBinding: binding }),
+    'RUNNER_BINDING_REQUIRES_EVIDENCE_V02',
   )
 })
 

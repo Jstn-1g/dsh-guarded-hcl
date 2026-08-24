@@ -2,6 +2,7 @@
 import { readFile } from 'node:fs/promises'
 import process from 'node:process'
 import { evaluateCandidate } from '../src/gate.js'
+import { parseIJson } from '../src/jcs.js'
 import { parseRunnerBinding } from '../src/runner-binding.js'
 
 const [, , policyPath, evidencePath, runnerBindingPath] = process.argv
@@ -15,7 +16,7 @@ if (!policyPath || !evidencePath) {
   try {
     const [policy, evidence, runnerBinding] = await Promise.all([
       readJson(policyPath),
-      readJson(evidencePath),
+      readEvidence(evidencePath),
       runnerBindingPath ? readRunnerBinding(runnerBindingPath) : undefined,
     ])
     const resolutionInput = runnerBindingPath ? { runnerBinding } : undefined
@@ -36,6 +37,16 @@ async function readRunnerBinding(path) {
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error)
     throw new Error(`Invalid RunnerBinding in ${path}: ${message}`)
+  }
+}
+
+async function readEvidence(path) {
+  const source = await readFile(path, 'utf8')
+  try {
+    return parseIJson(source)
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
+    throw new Error(`Invalid EvaluationEvidence in ${path}: ${message}`)
   }
 }
 
