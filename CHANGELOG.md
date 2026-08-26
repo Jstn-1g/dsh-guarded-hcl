@@ -31,6 +31,14 @@ All notable changes to this project are documented here.
   implicit v0.1 evidence, preventing an ignored binding from appearing verified.
 - Added duplicate-safe I-JSON parsing for CLI evidence and LF checkout rules
   plus Windows coverage for byte-pinned contract JSON.
+- Added the first 0.2 scorecard slice: a closed TrialManifest v0.1 schema that
+  binds independently controlled evaluator identities, Recipe and artifact
+  references, a RunnerBinding reference, measurement definitions, and an
+  ordered paired-trial set.
+- Added dependency-free TrialManifest validation, duplicate-safe parsing,
+  canonicalization, JCS + SHA-256 digest APIs, a packaged example, and
+  schema/runtime parity tests. TrialResults, aggregation, scorecard rendering,
+  the scorecard CLI, and the GitHub Action remain future work.
 - Preserved all existing v0.1 policy, evidence, and decision digest behavior.
 
 ## 0.1.0 — 2026-08-21

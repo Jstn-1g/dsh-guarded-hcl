@@ -12,7 +12,7 @@
 
 ## 0.2 — Reproducible scorecard runner
 
-- [ ] Trial manifest with exact model, environment, dataset, and grader versions
+- [x] Trial manifest with exact model, environment, dataset, and grader versions
 - [ ] Multi-trial aggregation with confidence intervals
 - [ ] Signed or content-addressed evidence bundle
 - [ ] HTML and JSON scorecard output

@@ -35,8 +35,10 @@
     "./canonical": "./src/canonical.js",
     "./jcs": "./src/jcs.js",
     "./runner-binding": "./src/runner-binding.js",
+    "./trial-manifest": "./src/trial-manifest.js",
     "./evaluation-evidence-v0.2": "./src/evaluation-evidence-v0.2.js",
     "./schemas/runner-binding-v0.1.schema.json": "./schemas/runner-binding-v0.1.schema.json",
+    "./schemas/trial-manifest-v0.1.schema.json": "./schemas/trial-manifest-v0.1.schema.json",
     "./schemas/evaluation-evidence-v0.2.schema.json": "./schemas/evaluation-evidence-v0.2.schema.json"
   },
   "bin": {
@@ -60,7 +62,7 @@
   ],
   "scripts": {
     "test": "node --test",
-    "check": "node --check src/artifact.js && node --check src/canonical.js && node --check src/jcs.js && node --check src/runner-binding.js && node --check src/evaluation-evidence-v0.2.js && node --check src/gate.js && node --check src/index.js && node --check bin/hcl-gate.js && node --check integrations/dsh-wm/contract.js && node --check integrations/dsh-wm/sunset-conformance.js && node --check scripts/check-package-contents.mjs && node --check test/artifact.test.js && node --check test/gate.test.js && node --check test/jcs.test.js && node --check test/runner-binding.test.js && node --check test/evaluation-evidence-v0.2.test.js && node --check test/cli.test.js && node --check test/dsh-wm-integration.test.js",
+    "check": "node --check src/artifact.js && node --check src/canonical.js && node --check src/jcs.js && node --check src/runner-binding.js && node --check src/trial-manifest.js && node --check src/evaluation-evidence-v0.2.js && node --check src/gate.js && node --check src/index.js && node --check bin/hcl-gate.js && node --check integrations/dsh-wm/contract.js && node --check integrations/dsh-wm/sunset-conformance.js && node --check scripts/check-package-contents.mjs && node --check test/artifact.test.js && node --check test/gate.test.js && node --check test/jcs.test.js && node --check test/runner-binding.test.js && node --check test/trial-manifest.test.js && node --check test/evaluation-evidence-v0.2.test.js && node --check test/cli.test.js && node --check test/dsh-wm-integration.test.js",
     "check:package": "node scripts/check-package-contents.mjs",
     "example:pass": "node ./bin/hcl-gate.js ./examples/policy.json ./examples/evaluation-pass.json",
     "example:reject": "node ./bin/hcl-gate.js ./examples/policy.json ./examples/evaluation-regression.json",
