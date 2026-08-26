@@ -28,6 +28,17 @@ export {
   validateRunnerBinding,
 } from './runner-binding.js'
 export {
+  TRIAL_MANIFEST_DIGEST_PROFILE,
+  TRIAL_MANIFEST_IDENTIFIER_PATTERN,
+  TRIAL_MANIFEST_SCHEMA_URI,
+  TRIAL_MANIFEST_SCHEMA_VERSION,
+  TrialManifestError,
+  canonicalizeTrialManifest,
+  digestTrialManifest,
+  parseTrialManifest,
+  validateTrialManifest,
+} from './trial-manifest.js'
+export {
   EVALUATION_EVIDENCE_V02_SCHEMA_URI,
   EVALUATION_EVIDENCE_V02_SCHEMA_VERSION,
   EvaluationEvidenceV02Error,

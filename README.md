@@ -87,6 +87,7 @@ The optimizer never owns its rubric or silently mutates cross-session state.
 | [`policy.schema.json`](schemas/policy.schema.json) | Code-owned thresholds the optimizer cannot rewrite implicitly |
 | [`decision.schema.json`](schemas/decision.schema.json) | Deterministic promotion or rejection result |
 | [`runner-binding-v0.1.schema.json`](schemas/runner-binding-v0.1.schema.json) | Exact candidate, artifact, and Selection Receipt audit binding |
+| [`trial-manifest-v0.1.schema.json`](schemas/trial-manifest-v0.1.schema.json) | Independently controlled identities, references, measurement plan, and ordered paired-trial set |
 
 See [`docs/design.md`](docs/design.md) for the proposed Cordis boundaries and
 threat model.
@@ -150,6 +151,30 @@ No network resolver is included. EvaluationEvidence v0.1 keeps its original
 closed field set, normalized bytes, digests, two-argument API, and CLI behavior.
 Supplying a RunnerBinding with v0.1 evidence fails closed, and CLI evidence
 parsing rejects literal or escaped-equivalent duplicate property names.
+
+### TrialManifest v0.1 — first 0.2 slice
+
+The versioned [TrialManifest contract](docs/trial-manifest-v0.1.md) freezes the
+independently controlled task, model, environment, dataset, grader, Recipe,
+artifact, RunnerBinding, metric, retention, validity, cost, and ordered
+paired-trial declarations for one future scorecard run. The operator or
+independent evaluator must own and pin this plan; an optimizer must not choose
+the rubric used to judge its own candidate.
+
+```js
+import {
+  digestTrialManifest,
+  parseTrialManifest,
+} from 'dsh-guarded-hcl/trial-manifest'
+
+const manifest = parseTrialManifest(sourceText)
+console.log(digestTrialManifest(manifest))
+```
+
+This first 0.2 slice provides a closed schema plus dependency-free validation,
+duplicate-safe parsing, canonicalization, and JCS + SHA-256 digest APIs. It does
+not yet include TrialResults, multi-trial aggregation, confidence intervals,
+scorecard rendering, a scorecard CLI, or a GitHub Action.
 
 ## Install from GitHub
 

@@ -40,6 +40,12 @@ const requiredEvaluationEvidenceV02 = [
   "schemas/evaluation-evidence-v0.2.schema.json",
   "src/evaluation-evidence-v0.2.js",
 ];
+const requiredTrialManifest = [
+  "docs/trial-manifest-v0.1.md",
+  "examples/trial-manifest-v0.1.json",
+  "schemas/trial-manifest-v0.1.schema.json",
+  "src/trial-manifest.js",
+];
 
 const forbidden = [
   /(^|\/)__pycache__(\/|$)/,
@@ -74,6 +80,16 @@ if (missingEvaluationEvidenceV02.length) {
   );
   process.exit(1);
 }
+const missingTrialManifest = requiredTrialManifest.filter(
+  (path) => !paths.includes(path),
+);
+if (missingTrialManifest.length) {
+  console.error(
+    "TrialManifest files missing from npm package:",
+    missingTrialManifest,
+  );
+  process.exit(1);
+}
 if (leaked.length) {
   console.error("generated or local files leaked into npm package:", leaked);
   process.exit(1);
@@ -84,5 +100,6 @@ console.log(
     `${actualConformance.length} allowlisted conformance files; ` +
     `${requiredRunnerBinding.length} required RunnerBinding files; ` +
     `${requiredEvaluationEvidenceV02.length} required EvaluationEvidence v0.2 files; ` +
+    `${requiredTrialManifest.length} required TrialManifest files; ` +
     "0 generated-file leaks",
 );

@@ -10,8 +10,9 @@ branch. Older revisions may be asked to reproduce against one of those targets.
 `dsh-guarded-hcl` is a dependency-free Node.js reference gate. It consumes
 locally supplied policy and evaluation-evidence JSON and produces a
 deterministic accept-or-reject decision before an integration activates a
-candidate. The CLI, library code, schemas, and pinned evaluator integration are
-in scope.
+candidate. Its library also validates and content-addresses locally supplied
+TrialManifest evaluation plans. The CLI, library code, schemas, and pinned
+evaluator integration are in scope.
 
 The project is not a sandbox, evaluator, artifact store, signature service, or
 activation controller. Deploying it does not by itself isolate an optimizer or
@@ -24,6 +25,12 @@ gate. Candidate-producing optimizers and candidate artifacts may be untrusted.
 Evaluation evidence crosses the decision boundary and can be malformed or
 attacker-influenced, even though a correct deployment should obtain it from an
 independent evaluator.
+
+The integrating operator or independent evaluator must also own and pin the
+TrialManifest measurement plan. An untrusted optimizer must not be allowed to
+select or relax its current-task metric, required-anchor status, maximum-loss
+allowances, validity severities, cost presence, or trial set. A manifest digest
+binds the supplied declaration; it does not establish who controlled it.
 
 The gate trusts the caller to bind the supplied digests to real artifacts and
 to activate only the exact candidate named by an accepted decision. External
@@ -53,6 +60,9 @@ evaluator fixtures are trusted only at their documented pinned revisions.
 - RunnerBinding JSON Schema and runtime validation must agree for JSON-shaped
   inputs, including Unicode scalar candidate identifiers and the exact
   lowercase HTTPS-or-URN schema-identifier profile.
+- TrialManifest validation must fail closed on malformed or ambiguous plans,
+  and its digest must bind the independently controlled identities,
+  measurement definitions, references, and ordered trial set.
 
 ## Reportable Findings and Severity Context
 
@@ -87,8 +97,8 @@ never normalizes caller-supplied paths, and does not acquire a snapshot or
 prove that the caller supplied every intended entry. Resource limits,
 snapshot completeness, canonical path production, and provenance verification
 remain the responsibility of the invoking host. Integrations should keep
-policy ownership, evaluation, and activation under separate control and pin
-every external input.
+policy and TrialManifest ownership, evaluation, and activation under separate
+control and pin the manifest plus every referenced external input.
 
 RunnerBinding likewise validates only the supplied declaration. It does not
 resolve its schema URI, artifact, or Selection Receipt; recompute either

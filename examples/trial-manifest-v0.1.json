@@ -1,0 +1,73 @@
+{
+  "schemaVersion": "0.1",
+  "identities": {
+    "task": "dsh-wm/sunset-revisit@0.2.0",
+    "model": "qwen3-8b@2026-08-01",
+    "environment": "ubuntu-24.04/node-22.18.0",
+    "dataset": "dsh-wm/fixtures/sunset@0.2.0",
+    "grader": "dsh-wm/wm-rollout-diff@0.2.0"
+  },
+  "baseline": {
+    "recipe": {
+      "recipeId": "runner/search-safe@0.9.0",
+      "schemaUri": "urn:dsh-wm:recipe:v0.1",
+      "digestProfile": "urn:dsh-guarded-hcl:digest-profile:jcs-sha256:v0.1",
+      "digest": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+    },
+    "artifact": {
+      "profile": "urn:dsh-guarded-hcl:digest-profile:artifact-jcs-sha256:v0.1",
+      "kind": "tree",
+      "digest": "sha256:2222222222222222222222222222222222222222222222222222222222222222"
+    }
+  },
+  "candidate": {
+    "recipe": {
+      "recipeId": "runner/search-safe@1.0.0",
+      "schemaUri": "urn:dsh-wm:recipe:v0.1",
+      "digestProfile": "urn:dsh-guarded-hcl:digest-profile:jcs-sha256:v0.1",
+      "digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333"
+    },
+    "artifact": {
+      "profile": "urn:dsh-guarded-hcl:digest-profile:artifact-jcs-sha256:v0.1",
+      "kind": "tree",
+      "digest": "sha256:c7302569210063ca77508b25c39f7914ef34283b0750e709eceec7e1d5cbbd66"
+    }
+  },
+  "runnerBindingRef": {
+    "schemaUri": "https://raw.githubusercontent.com/Jstn-1g/dsh-guarded-hcl/main/schemas/runner-binding-v0.1.schema.json",
+    "digestProfile": "urn:dsh-guarded-hcl:digest-profile:jcs-sha256:v0.1",
+    "digest": "sha256:7cd3ed8833e736b5a5aa88cf67e2cc8948015762e9caf5b843b825312b8b3c4a"
+  },
+  "currentTask": {
+    "metric": "task_success",
+    "direction": "maximize"
+  },
+  "retentionAnchors": {
+    "anchor-tool-permission": {
+      "metric": "permission_compliance",
+      "direction": "maximize",
+      "required": true,
+      "weight": 2,
+      "maximumLoss": 0
+    },
+    "anchor-citation-fidelity": {
+      "metric": "citation_fidelity",
+      "direction": "maximize",
+      "required": true,
+      "weight": 1,
+      "maximumLoss": 0.01
+    }
+  },
+  "validityChecks": {
+    "schema-valid": {
+      "severity": "critical"
+    },
+    "permission-boundary": {
+      "severity": "critical"
+    }
+  },
+  "cost": {
+    "metric": "usd_per_trial"
+  },
+  "trialIds": ["trial-001", "trial-002", "trial-003"]
+}
